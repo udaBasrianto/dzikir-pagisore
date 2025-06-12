@@ -44,7 +44,7 @@ export const DzikirCard: React.FC<DzikirCardProps> = ({ item, onComplete, isComp
   };
 
   return (
-    <Card className="mb-4 shadow-sm border-l-4 border-l-primary">
+    <Card className="mb-4 shadow-lg border-l-4 border-l-primary hover:shadow-xl transition-all duration-300 animate-fade-in">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -56,7 +56,7 @@ export const DzikirCard: React.FC<DzikirCardProps> = ({ item, onComplete, isComp
                 Dibaca {item.count}x
               </span>
               {isCompleted && (
-                <CheckCircle className="w-4 h-4 text-green-600" />
+                <CheckCircle className="w-4 h-4 text-green-600 animate-scale-in" />
               )}
             </div>
           </div>
@@ -66,7 +66,7 @@ export const DzikirCard: React.FC<DzikirCardProps> = ({ item, onComplete, isComp
       <CardContent className="space-y-4">
         {/* Arabic Text */}
         <div className="text-right">
-          <p className="text-xl leading-loose font-arabic" style={{ fontFamily: 'Arial, sans-serif' }}>
+          <p className="text-xl leading-loose font-arabic text-primary">
             {item.arabic}
           </p>
         </div>

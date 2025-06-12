@@ -8,6 +8,7 @@ import { dzikirPagiData, dzikirPetangData } from '@/data/dzikirData';
 const Index = () => {
   const [activeTab, setActiveTab] = useState('pagi');
   const [completedItems, setCompletedItems] = useState<Set<number>>(new Set());
+  const [lastDzikirTab, setLastDzikirTab] = useState('pagi');
 
   // Load progress from localStorage
   useEffect(() => {
@@ -31,6 +32,7 @@ const Index = () => {
   const renderContent = () => {
     switch (activeTab) {
       case 'pagi':
+        setLastDzikirTab('pagi');
         return (
           <div className="space-y-4 pb-20">
             <div className="text-center mb-6 sticky top-0 bg-background/95 backdrop-blur-sm z-10 py-4">
@@ -57,15 +59,29 @@ const Index = () => {
         );
       
       case 'petang':
+        setLastDzikirTab('petang');
         return (
-          <div className="flex items-center justify-center min-h-[60vh] pb-20">
-            <div className="text-center space-y-4">
-              <div className="text-6xl">🌅</div>
-              <h2 className="text-2xl font-bold text-foreground">Dzikir Petang</h2>
-              <p className="text-muted-foreground max-w-md mx-auto">
-                Fitur dzikir petang akan segera hadir. Saat ini fokus pada dzikir pagi untuk memulai hari dengan berkah.
+          <div className="space-y-4 pb-20">
+            <div className="text-center mb-6 sticky top-0 bg-background/95 backdrop-blur-sm z-10 py-4">
+              <h1 className="text-2xl font-bold text-foreground mb-2">
+                🌅 Dzikir Petang
+              </h1>
+              <p className="text-muted-foreground text-sm">
+                Akhiri hari dengan dzikir dan doa
               </p>
+              <div className="text-xs text-muted-foreground mt-2">
+                {completedItems.size}/{dzikirPetangData.length} selesai
+              </div>
             </div>
+            
+            {dzikirPetangData.map((item) => (
+              <DzikirCard
+                key={item.id}
+                item={item}
+                onComplete={handleComplete}
+                isCompleted={completedItems.has(item.id)}
+              />
+            ))}
           </div>
         );
       
@@ -73,7 +89,7 @@ const Index = () => {
         return (
           <ProgressPage 
             completedItems={completedItems}
-            totalItems={dzikirPagiData.length}
+            totalItems={lastDzikirTab === 'pagi' ? dzikirPagiData.length : dzikirPetangData.length}
           />
         );
       
