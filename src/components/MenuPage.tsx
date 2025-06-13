@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock, Home, Book, Settings, Info, Heart } from 'lucide-react';
+import { Clock, Home, Book, Settings, Info, Heart, Bell, Palette } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { NotificationSettings } from '@/components/NotificationSettings';
 
 interface MenuPageProps {
   onNavigate: (tab: string) => void;
 }
 
 export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
+  const [showNotifications, setShowNotifications] = useState(false);
   const menuItems = [
     {
       id: 'pagi',
@@ -32,6 +35,23 @@ export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
     }
   ];
 
+  const settingsItems = [
+    {
+      title: 'Pengaturan Notifikasi',
+      description: 'Atur pengingat dzikir pagi dan petang',
+      icon: Bell,
+      color: 'text-blue-500',
+      action: () => setShowNotifications(true)
+    },
+    {
+      title: 'Tema Aplikasi',
+      description: 'Pilih tema terang, gelap, atau otomatis',
+      icon: Palette,
+      color: 'text-purple-500',
+      component: <ThemeToggle />
+    }
+  ];
+
   const aboutItems = [
     {
       title: 'Tentang Aplikasi',
@@ -46,6 +66,10 @@ export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
       color: 'text-red-500'
     }
   ];
+
+  if (showNotifications) {
+    return <NotificationSettings onClose={() => setShowNotifications(false)} />;
+  }
 
   return (
     <div className="space-y-6 pb-20">
@@ -83,6 +107,43 @@ export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
                       </div>
                     </div>
                   </Button>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Settings Section */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold text-foreground">Pengaturan</h2>
+        <div className="grid gap-4">
+          {settingsItems.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <Card key={index} className={item.action ? "cursor-pointer hover:shadow-md transition-all" : ""}>
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4 flex-1">
+                      <div className={`p-3 rounded-lg bg-muted ${item.color}`}>
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-foreground">{item.title}</h3>
+                        <p className="text-sm text-muted-foreground">{item.description}</p>
+                      </div>
+                    </div>
+                    {item.component && (
+                      <div className="ml-4">
+                        {item.component}
+                      </div>
+                    )}
+                    {item.action && (
+                      <Button variant="outline" size="sm" onClick={item.action} className="ml-4">
+                        <Settings className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             );
@@ -147,7 +208,15 @@ export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-primary rounded-full"></div>
+              <span>Audio pronunciation dzikir</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-primary rounded-full"></div>
               <span>Transliterasi dan terjemahan</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-primary rounded-full"></div>
+              <span>Reminder notification</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-primary rounded-full"></div>
@@ -155,7 +224,15 @@ export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-primary rounded-full"></div>
-              <span>Progress tracking</span>
+              <span>Streak tracking & achievements</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-primary rounded-full"></div>
+              <span>Weekly progress analytics</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-primary rounded-full"></div>
+              <span>Dark/Light theme toggle</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-primary rounded-full"></div>

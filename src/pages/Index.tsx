@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { DzikirCard } from '@/components/DzikirCard';
 import { BottomNavigation } from '@/components/BottomNavigation';
-import { ProgressPage } from '@/components/ProgressPage';
+import { EnhancedProgress } from '@/components/EnhancedProgress';
 import { MenuPage } from '@/components/MenuPage';
+import { useStreak } from '@/hooks/useStreak';
 import { dzikirPagiData, dzikirPetangData } from '@/data/dzikirData';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('pagi');
   const [completedItems, setCompletedItems] = useState<Set<number>>(new Set());
   const [lastDzikirTab, setLastDzikirTab] = useState('pagi');
+  
+  // Use streak hook to track progress
+  const currentTotalItems = lastDzikirTab === 'pagi' ? dzikirPagiData.length : dzikirPetangData.length;
+  useStreak(completedItems, currentTotalItems);
 
   // Load progress from localStorage
   useEffect(() => {
@@ -92,9 +97,10 @@ const Index = () => {
       
       case 'progress':
         return (
-          <ProgressPage 
+          <EnhancedProgress 
             completedItems={completedItems}
             totalItems={lastDzikirTab === 'pagi' ? dzikirPagiData.length : dzikirPetangData.length}
+            currentTab={lastDzikirTab}
           />
         );
       

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { CheckCircle, Circle, Plus, Minus } from 'lucide-react';
+import { AudioPlayer } from '@/components/AudioPlayer';
 
 interface DzikirItem {
   id: number;
@@ -83,6 +84,11 @@ export const DzikirCard: React.FC<DzikirCardProps> = ({ item, onComplete, isComp
           <p className="text-sm text-foreground leading-relaxed">
             {item.translation}
           </p>
+        </div>
+        
+        {/* Audio Player */}
+        <div className="flex justify-center pt-2">
+          <AudioPlayer text={item.arabic} />
         </div>
         
         {/* Counter Section */}
