@@ -15,8 +15,8 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ text, className = '' }
   const { toast } = useToast();
 
   const handlePlayAudio = async () => {
-    if (isPlaying && audioRef.current) {
-      audioRef.current.pause();
+    if (isPlaying) {
+      speechSynthesis.cancel();
       setIsPlaying(false);
       return;
     }
@@ -26,21 +26,36 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ text, className = '' }
       
       // Check if browser supports speech synthesis
       if ('speechSynthesis' in window) {
+        // Load voices if not loaded
+        let voices = speechSynthesis.getVoices();
+        if (voices.length === 0) {
+          await new Promise((resolve) => {
+            speechSynthesis.addEventListener('voiceschanged', resolve, { once: true });
+            setTimeout(resolve, 1000); // Fallback timeout
+          });
+          voices = speechSynthesis.getVoices();
+        }
+
         const utterance = new SpeechSynthesisUtterance(text);
         
-        // Try to find an Arabic voice
-        const voices = speechSynthesis.getVoices();
-        const arabicVoice = voices.find(voice => 
-          voice.lang.includes('ar') || voice.name.includes('Arabic')
+        // Try to find an Arabic voice or any available voice
+        let selectedVoice = voices.find(voice => 
+          voice.lang.includes('ar') || voice.name.toLowerCase().includes('arabic')
         );
         
-        if (arabicVoice) {
-          utterance.voice = arabicVoice;
+        // Fallback to any available voice
+        if (!selectedVoice && voices.length > 0) {
+          selectedVoice = voices[0];
         }
         
-        utterance.rate = 0.8; // Slower for better pronunciation
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+        }
+        
+        utterance.rate = 0.7; // Slower for better pronunciation
         utterance.pitch = 1;
         utterance.volume = 1;
+        utterance.lang = 'ar-SA'; // Arabic language
         
         utterance.onstart = () => {
           setIsPlaying(true);
@@ -52,16 +67,22 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ text, className = '' }
         };
         
         utterance.onerror = (event) => {
+          console.error('Speech synthesis error:', event);
           setIsPlaying(false);
           setIsLoading(false);
           toast({
             title: "Error",
-            description: "Tidak dapat memutar audio. Coba lagi nanti.",
+            description: "Tidak dapat memutar audio. Pastikan volume device tidak dalam mode silent.",
             variant: "destructive",
           });
         };
         
-        speechSynthesis.speak(utterance);
+        // Cancel any ongoing speech before starting new one
+        speechSynthesis.cancel();
+        setTimeout(() => {
+          speechSynthesis.speak(utterance);
+        }, 100);
+        
       } else {
         setIsLoading(false);
         toast({
@@ -71,6 +92,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ text, className = '' }
         });
       }
     } catch (error) {
+      console.error('Audio error:', error);
       setIsLoading(false);
       setIsPlaying(false);
       toast({

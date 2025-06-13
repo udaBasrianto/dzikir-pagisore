@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { CheckCircle, Circle, Plus, Minus } from 'lucide-react';
 import { AudioPlayer } from '@/components/AudioPlayer';
+import { useGlobalCounter } from '@/hooks/useGlobalCounter';
 
 interface DzikirItem {
   id: number;
@@ -22,11 +23,15 @@ interface DzikirCardProps {
 
 export const DzikirCard: React.FC<DzikirCardProps> = ({ item, onComplete, isCompleted }) => {
   const [currentCount, setCurrentCount] = useState(0);
+  const { incrementDzikirRead } = useGlobalCounter();
 
   const handleIncrement = () => {
     if (currentCount < item.count) {
       const newCount = currentCount + 1;
       setCurrentCount(newCount);
+      
+      // Increment global counter for each dzikir read
+      incrementDzikirRead();
       
       if (newCount === item.count) {
         onComplete(item.id);

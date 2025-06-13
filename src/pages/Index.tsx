@@ -8,6 +8,7 @@ import { CalendarProgress } from '@/components/CalendarProgress';
 import { MoodTracker } from '@/components/MoodTracker';
 import { CustomDzikir } from '@/components/CustomDzikir';
 import { ShareProgress } from '@/components/ShareProgress';
+import { PWAInstallPrompt } from '@/components/PWAInstallPrompt';
 import { useStreak } from '@/hooks/useStreak';
 import { dzikirPagiData, dzikirPetangData } from '@/data/dzikirData';
 
@@ -164,6 +165,9 @@ const Index = () => {
       {(activeTab === 'pagi' || activeTab === 'petang') && !floatingMenuAction && (
         <FloatingActionButton onActionSelect={handleFloatingAction} />
       )}
+      
+      {/* PWA Install Prompt */}
+      <PWAInstallPrompt />
     </div>
   );
 };

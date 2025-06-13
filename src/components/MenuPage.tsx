@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Clock, Home, Book, Settings, Info, Heart, Bell, Palette } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { NotificationSettings } from '@/components/NotificationSettings';
+import { GlobalStats } from '@/components/GlobalStats';
 
 interface MenuPageProps {
   onNavigate: (tab: string) => void;
@@ -194,6 +195,9 @@ export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Global Statistics */}
+      <GlobalStats />
 
       {/* Features */}
       <Card>
