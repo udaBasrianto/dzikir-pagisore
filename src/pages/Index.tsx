@@ -29,10 +29,16 @@ const Index = () => {
     setCompletedItems(prev => new Set([...prev, id]));
   };
 
+  // Update lastDzikirTab when switching between dzikir tabs
+  useEffect(() => {
+    if (activeTab === 'pagi' || activeTab === 'petang') {
+      setLastDzikirTab(activeTab);
+    }
+  }, [activeTab]);
+
   const renderContent = () => {
     switch (activeTab) {
       case 'pagi':
-        setLastDzikirTab('pagi');
         return (
           <div className="space-y-4 pb-20">
             <div className="text-center mb-6 sticky top-0 bg-background/95 backdrop-blur-sm z-10 py-4">
@@ -59,7 +65,6 @@ const Index = () => {
         );
       
       case 'petang':
-        setLastDzikirTab('petang');
         return (
           <div className="space-y-4 pb-20">
             <div className="text-center mb-6 sticky top-0 bg-background/95 backdrop-blur-sm z-10 py-4">
