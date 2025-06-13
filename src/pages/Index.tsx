@@ -3,6 +3,11 @@ import { DzikirCard } from '@/components/DzikirCard';
 import { BottomNavigation } from '@/components/BottomNavigation';
 import { EnhancedProgress } from '@/components/EnhancedProgress';
 import { MenuPage } from '@/components/MenuPage';
+import { FloatingActionButton } from '@/components/FloatingActionButton';
+import { CalendarProgress } from '@/components/CalendarProgress';
+import { MoodTracker } from '@/components/MoodTracker';
+import { CustomDzikir } from '@/components/CustomDzikir';
+import { ShareProgress } from '@/components/ShareProgress';
 import { useStreak } from '@/hooks/useStreak';
 import { dzikirPagiData, dzikirPetangData } from '@/data/dzikirData';
 
@@ -10,6 +15,7 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState('pagi');
   const [completedItems, setCompletedItems] = useState<Set<number>>(new Set());
   const [lastDzikirTab, setLastDzikirTab] = useState('pagi');
+  const [floatingMenuAction, setFloatingMenuAction] = useState<string | null>(null);
   
   // Use streak hook to track progress
   const currentTotalItems = lastDzikirTab === 'pagi' ? dzikirPagiData.length : dzikirPetangData.length;
@@ -41,7 +47,35 @@ const Index = () => {
     }
   }, [activeTab]);
 
+  const handleFloatingAction = (action: string) => {
+    setFloatingMenuAction(action);
+  };
+
   const renderContent = () => {
+    // Handle floating menu actions
+    if (floatingMenuAction) {
+      switch (floatingMenuAction) {
+        case 'share':
+          return (
+            <ShareProgress 
+              completedItems={completedItems}
+              totalItems={lastDzikirTab === 'pagi' ? dzikirPagiData.length : dzikirPetangData.length}
+              currentTab={lastDzikirTab}
+              onClose={() => setFloatingMenuAction(null)}
+            />
+          );
+        case 'calendar':
+          return <CalendarProgress onClose={() => setFloatingMenuAction(null)} />;
+        case 'mood':
+          return <MoodTracker onClose={() => setFloatingMenuAction(null)} />;
+        case 'custom-dzikir':
+          return <CustomDzikir onClose={() => setFloatingMenuAction(null)} />;
+        default:
+          setFloatingMenuAction(null);
+          break;
+      }
+    }
+
     switch (activeTab) {
       case 'pagi':
         return (
@@ -105,7 +139,14 @@ const Index = () => {
         );
       
       case 'menu':
-        return <MenuPage onNavigate={setActiveTab} />;
+        return (
+          <MenuPage 
+            onNavigate={setActiveTab} 
+            completedItems={completedItems}
+            totalItems={lastDzikirTab === 'pagi' ? dzikirPagiData.length : dzikirPetangData.length}
+            currentTab={lastDzikirTab}
+          />
+        );
       
       default:
         return null;
@@ -121,6 +162,11 @@ const Index = () => {
         activeTab={activeTab} 
         onTabChange={setActiveTab} 
       />
+      
+      {/* Floating Action Button - only show on dzikir tabs */}
+      {(activeTab === 'pagi' || activeTab === 'petang') && !floatingMenuAction && (
+        <FloatingActionButton onActionSelect={handleFloatingAction} />
+      )}
     </div>
   );
 };
