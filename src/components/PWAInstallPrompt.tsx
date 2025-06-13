@@ -47,9 +47,8 @@ export const PWAInstallPrompt = () => {
     const { outcome } = await deferredPrompt.userChoice;
     
     if (outcome === 'accepted') {
-      // Track installation
-      const currentInstalls = parseInt(localStorage.getItem('app-installs') || '0');
-      localStorage.setItem('app-installs', (currentInstalls + 1).toString());
+      // Track installation via custom event that the hook will listen to
+      window.dispatchEvent(new CustomEvent('pwa-installed'));
     }
     
     setDeferredPrompt(null);

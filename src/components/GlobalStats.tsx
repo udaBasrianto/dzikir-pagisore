@@ -4,7 +4,7 @@ import { Users, Download, BookOpen } from 'lucide-react';
 import { useGlobalCounter } from '@/hooks/useGlobalCounter';
 
 export const GlobalStats = () => {
-  const { stats } = useGlobalCounter();
+  const { stats, isOnline } = useGlobalCounter();
 
   const formatNumber = (num: number) => {
     if (num >= 1000000) {
@@ -76,6 +76,10 @@ export const GlobalStats = () => {
 
       <div className="text-xs text-muted-foreground text-center mt-4 p-3 bg-muted/50 rounded-lg">
         ✨ Bergabunglah dengan ribuan muslim lainnya dalam mengamalkan dzikir harian
+        <div className="mt-2 flex items-center justify-center gap-2">
+          <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500' : 'bg-gray-400'}`} />
+          <span className="text-xs">{isOnline ? 'Data Real-time' : 'Mode Offline'}</span>
+        </div>
       </div>
     </div>
   );

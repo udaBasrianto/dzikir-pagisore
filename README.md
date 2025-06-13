@@ -1,73 +1,135 @@
-# Welcome to your Lovable project
+# Panduan Dzikir Pagi Petang
 
-## Project info
+Aplikasi Progressive Web App (PWA) untuk panduan dzikir pagi dan petang sesuai sunnah Rasulullah SAW.
 
-**URL**: https://lovable.dev/projects/95e405a6-9cac-4668-872e-594089eb8692
+## Fitur Utama
 
-## How can I edit this code?
+### 🔥 Fitur Baru dengan Firebase
+- **Anonymous Authentication**: Otomatis login tanpa registrasi
+- **Real-time Database**: Data statistik global yang update secara real-time
+- **Offline Support**: Tetap berfungsi meski tanpa internet dengan cache localStorage
+- **Global Statistics**: 
+  - Total dzikir dibaca oleh semua pengguna
+  - Jumlah aplikasi terinstall 
+  - Pengguna aktif harian
 
-There are several ways of editing your application.
+### 📱 PWA Features
+- **Installable**: Dapat diinstall seperti aplikasi native
+- **Offline Ready**: Service Worker untuk cache dan akses offline
+- **Responsive**: Optimal di semua perangkat
 
-**Use Lovable**
+### 🎯 Fitur Dzikir
+- **Dzikir Pagi & Petang**: Koleksi lengkap dzikir sesuai sunnah
+- **Audio Player**: Suara bacaan dzikir dengan voice yang jernih
+- **Counter Otomatis**: Hitung otomatis setiap dzikir yang dibaca
+- **Progress Tracking**: Lacak kemajuan harian dan streak
+- **Calendar View**: Visualisasi progress dalam bentuk kalender
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/95e405a6-9cac-4668-872e-594089eb8692) and start prompting.
+### 🎨 UI/UX Features
+- **Tema Hijau**: Desain yang menenangkan dengan warna hijau sebagai primary
+- **Dark/Light Mode**: Mendukung kedua mode tema
+- **Animasi Smooth**: Transisi dan animasi yang halus
+- **Floating Action Button**: Akses cepat ke fitur tambahan
 
-Changes made via Lovable will be committed automatically to this repo.
+### 📊 Analytics & Tracking
+- **Mood Tracker**: Catat mood sebelum dan sesudah dzikir
+- **Streak Counter**: Hitung berapa hari berturut-turut dzikir
+- **Share Progress**: Bagikan kemajuan ke media sosial
+- **Custom Dzikir**: Tambah dzikir personal
 
-**Use your preferred IDE**
+## Setup Firebase (Wajib!)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1. Buat project Firebase di [console.firebase.google.com](https://console.firebase.google.com)
+2. Aktifkan Authentication dengan Anonymous provider
+3. Buat Firestore database dengan rules:
+   ```javascript
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       match /stats/{document} {
+         allow read, write: if request.auth != null;
+       }
+       match /activeUsers/{document} {
+         allow read, write: if request.auth != null;
+       }
+     }
+   }
+   ```
+4. Update konfigurasi Firebase di `src/config/firebase.ts`:
+   ```typescript
+   const firebaseConfig = {
+     apiKey: "your-api-key",
+     authDomain: "your-project.firebaseapp.com", 
+     projectId: "your-project-id",
+     storageBucket: "your-project.appspot.com",
+     messagingSenderId: "123456789",
+     appId: "your-app-id"
+   };
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Struktur Database Firebase
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+### Collection: `stats`
+```javascript
+{
+  "globalStats": {
+    "totalReads": number,
+    "appInstalls": number, 
+    "activeUsers": number,
+    "lastUpdated": timestamp
+  }
+}
 ```
 
-**Edit a file directly in GitHub**
+### Collection: `activeUsers`
+```javascript
+{
+  "2024-06-13": {
+    "date": "Wed Jun 13 2024",
+    "count": 1,
+    "timestamp": timestamp
+  }
+}
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Teknologi
 
-**Use GitHub Codespaces**
+- **Frontend**: React 18, TypeScript, Vite
+- **Styling**: Tailwind CSS, Shadcn/ui
+- **Database**: Firebase Firestore
+- **Authentication**: Firebase Anonymous Auth
+- **PWA**: Service Worker, Web App Manifest
+- **State Management**: React Hooks, Context API
+- **Audio**: Web Audio API
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Development
 
-## What technologies are used for this project?
+```bash
+# Install dependencies
+npm install
 
-This project is built with:
+# Run development server
+npm run dev
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+# Build for production
+npm run build
+```
 
-## How can I deploy this project?
+## Fitur Offline
 
-Simply open [Lovable](https://lovable.dev/projects/95e405a6-9cac-4668-872e-594089eb8692) and click on Share -> Publish.
+Aplikasi menggunakan strategi hybrid:
+- **Online**: Data real-time dari Firebase
+- **Offline**: Fallback ke localStorage
+- **Sync**: Auto-sync ketika online kembali
 
-## Can I connect a custom domain to my Lovable project?
+## Kontribusi
 
-Yes, you can!
+Kontribusi sangat diterima! Silakan buat issue atau pull request.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Lisensi
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+MIT License - Silakan gunakan untuk keperluan dakwah dan edukasi.
+
+---
+
+**Barakallahu fiikum** 🤲
