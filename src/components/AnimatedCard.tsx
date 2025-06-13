@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, CardProps } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 
-interface AnimatedCardProps extends CardProps {
+interface AnimatedCardProps extends React.HTMLAttributes<HTMLDivElement> {
   delay?: number;
   animation?: 'fade-in' | 'slide-up' | 'scale-in';
 }

@@ -142,9 +142,6 @@ const Index = () => {
         return (
           <MenuPage 
             onNavigate={setActiveTab} 
-            completedItems={completedItems}
-            totalItems={lastDzikirTab === 'pagi' ? dzikirPagiData.length : dzikirPetangData.length}
-            currentTab={lastDzikirTab}
           />
         );
       
