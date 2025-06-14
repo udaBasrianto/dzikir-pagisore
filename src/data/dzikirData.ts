@@ -21,8 +21,8 @@ export const dzikirPagiData: DzikirItem[] = [
     id: 2,
     title: "Ayat Kursi",
     arabic: "اللَّهُ لاَ إِلَهَ إِلاَّ هُوَ الْحَيُّ الْقَيُّومُ، لاَ تَأْخُذُهُ سِنَةٌ وَلاَ نَوْمٌ، لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ، مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلاَّ بِإِذْنِهِ، يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ، وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلاَّ بِمَا شَاءَ، وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ، وَلَا يَئُودُهُ حِفْظُهُمَا، وَهُوَ الْعَلِيُّ الْعَظِيمُ",
-    transliteration: "Allahu laa ilaaha illa huwal hayyul qayyuum...",
-    translation: "Allah tidak ada Ilah (yang berhak diibadahi) melainkan Dia Yang Hidup Kekal lagi terus menerus mengurus (makhluk-Nya); tidak mengantuk dan tidak tidur. Kepunyaan-Nya apa yang ada di langit dan di bumi...",
+    transliteration: "Allahu laa ilaaha illa huwal hayyul qayyuum, laa ta'khudzuhu sinatun wa laa naum. Lahu maa fis-samaawaati wa maa fil-ardh. Man dzal-ladzii yasyfa'u 'indahu illaa bi-idznih. Ya'lamu maa bayna aydiihim wa maa khalfahum, wa laa yuhiituuna bi syay-in min 'ilmihi illaa bimaa syaa'. Wasi'a kursiyyuhus-samaawaati wal-ardh, wa laa ya'uuduhu hifzhuhuma, wa huwal-'aliyyul-'azhiim.",
+    translation: "Allah tidak ada Ilah (yang berhak diibadahi) melainkan Dia Yang Hidup Kekal lagi terus menerus mengurus (makhluk-Nya); tidak mengantuk dan tidak tidur. Kepunyaan-Nya apa yang ada di langit dan di bumi. Tiada yang dapat memberi syafa'at di sisi Allah tanpa seizin-Nya. Allah mengetahui apa-apa yang ada di hadapan mereka dan di belakang mereka, dan mereka tidak mengetahui apa-apa dari ilmu Allah melainkan apa yang dikehendaki-Nya. Kursi Allah meliputi langit dan bumi. Dan Allah tidak merasa berat memelihara keduanya, dan Allah Maha Tinggi lagi Maha Besar.",
     count: 1
   },
   {
@@ -184,8 +184,8 @@ export const dzikirPetangData: DzikirItem[] = [
     id: 102,
     title: "Ayat Kursi",
     arabic: "اللَّهُ لاَ إِلَهَ إِلاَّ هُوَ الْحَيُّ الْقَيُّومُ، لاَ تَأْخُذُهُ سِنَةٌ وَلاَ نَوْمٌ، لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ، مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلاَّ بِإِذْنِهِ، يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ، وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلاَّ بِمَا شَاءَ، وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ، وَلَا يَئُودُهُ حِفْظُهُمَا، وَهُوَ الْعَلِيُّ الْعَظِيمُ",
-    transliteration: "Allahu laa ilaaha illa huwal hayyul qayyuum...",
-    translation: "Allah tidak ada Ilah (yang berhak diibadahi) melainkan Dia Yang Hidup Kekal lagi terus menerus mengurus (makhluk-Nya); tidak mengantuk dan tidak tidur. Kepunyaan-Nya apa yang ada di langit dan di bumi...",
+    transliteration: "Allahu laa ilaaha illa huwal hayyul qayyuum, laa ta'khudzuhu sinatun wa laa naum. Lahu maa fis-samaawaati wa maa fil-ardh. Man dzal-ladzii yasyfa'u 'indahu illaa bi-idznih. Ya'lamu maa bayna aydiihim wa maa khalfahum, wa laa yuhiituuna bi syay-in min 'ilmihi illaa bimaa syaa'. Wasi'a kursiyyuhus-samaawaati wal-ardh, wa laa ya'uuduhu hifzhuhuma, wa huwal-'aliyyul-'azhiim.",
+    translation: "Allah tidak ada Ilah (yang berhak diibadahi) melainkan Dia Yang Hidup Kekal lagi terus menerus mengurus (makhluk-Nya); tidak mengantuk dan tidak tidur. Kepunyaan-Nya apa yang ada di langit dan di bumi. Tiada yang dapat memberi syafa'at di sisi Allah tanpa seizin-Nya. Allah mengetahui apa-apa yang ada di hadapan mereka dan di belakang mereka, dan mereka tidak mengetahui apa-apa dari ilmu Allah melainkan apa yang dikehendaki-Nya. Kursi Allah meliputi langit dan bumi. Dan Allah tidak merasa berat memelihara keduanya, dan Allah Maha Tinggi lagi Maha Besar.",
     count: 1
   },
   {
