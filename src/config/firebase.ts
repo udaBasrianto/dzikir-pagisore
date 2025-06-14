@@ -1,19 +1,21 @@
 import { initializeApp } from 'firebase/app';
+import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from 'firebase/firestore';
 import { getAuth, signInAnonymously } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDcoyYOlXb_I767CVOtwKzT9znyAUmHnms",
-  authDomain: "pos-gemini.firebaseapp.com",
-  projectId: "pos-gemini",
-  storageBucket: "pos-gemini.firebasestorage.app",
-  messagingSenderId: "602180862196",
-  appId: "1:602180862196:web:4a3861127d2f0f93a8dea1",
-  measurementId: "G-K9T4D8G8F7"
+  apiKey: "AIzaSyAdvhIbabO4xrLpjHOhy0wiVCtCE_VnyKQ",
+  authDomain: "lovable-dzikr.firebaseapp.com",
+  projectId: "lovable-dzikr",
+  storageBucket: "lovable-dzikr.firebasestorage.app",
+  messagingSenderId: "336024950491",
+  appId: "1:336024950491:web:666a52251792d6267ddefe",
+  measurementId: "G-QH5HZJ435S"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 // Initialize Firebase services
 export const db = getFirestore(app);
