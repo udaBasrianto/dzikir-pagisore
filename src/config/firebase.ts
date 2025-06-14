@@ -3,13 +3,13 @@ import { getFirestore } from 'firebase/firestore';
 import { getAuth, signInAnonymously } from 'firebase/auth';
 
 const firebaseConfig = {
-  // Replace with your Firebase config
-  apiKey: "your-api-key",
-  authDomain: "your-project.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "your-app-id"
+  apiKey: "AIzaSyDcoyYOlXb_I767CVOtwKzT9znyAUmHnms",
+  authDomain: "pos-gemini.firebaseapp.com",
+  projectId: "pos-gemini",
+  storageBucket: "pos-gemini.firebasestorage.app",
+  messagingSenderId: "602180862196",
+  appId: "1:602180862196:web:4a3861127d2f0f93a8dea1",
+  measurementId: "G-K9T4D8G8F7"
 };
 
 // Initialize Firebase
