@@ -98,7 +98,10 @@ export const DzikirCard: React.FC<DzikirCardProps> = ({ item, onComplete, isComp
         
         {/* Audio Player */}
         <div className="flex justify-center pt-2">
-          <AudioPlayer text={item.arabic} />
+          <AudioPlayer 
+            text={item.arabic} 
+            enableElevenLabs={localStorage.getItem('enable-elevenlabs') === 'true'}
+          />
         </div>
         
         {/* Counter Section */}

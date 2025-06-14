@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock, Home, Book, Settings, Info, Heart, Bell, Palette } from 'lucide-react';
+import { Clock, Home, Book, Settings, Info, Heart, Bell, Palette, Volume2 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { NotificationSettings } from '@/components/NotificationSettings';
+import { AudioSettings } from '@/components/AudioSettings';
 import { GlobalStats } from '@/components/GlobalStats';
 
 interface MenuPageProps {
@@ -12,6 +13,7 @@ interface MenuPageProps {
 
 export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showAudioSettings, setShowAudioSettings] = useState(false);
   const menuItems = [
     {
       id: 'pagi',
@@ -45,6 +47,13 @@ export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
 
   const settingsItems = [
     {
+      title: 'Pengaturan Audio',
+      description: 'Setup ElevenLabs AI untuk pronunciation Arabic terbaik',
+      icon: Volume2,
+      color: 'text-green-500',
+      action: () => setShowAudioSettings(true)
+    },
+    {
       title: 'Pengaturan Notifikasi',
       description: 'Atur pengingat dzikir pagi dan petang',
       icon: Bell,
@@ -77,6 +86,10 @@ export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
 
   if (showNotifications) {
     return <NotificationSettings onClose={() => setShowNotifications(false)} />;
+  }
+
+  if (showAudioSettings) {
+    return <AudioSettings onClose={() => setShowAudioSettings(false)} />;
   }
 
   return (
