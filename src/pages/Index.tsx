@@ -9,6 +9,7 @@ import { MoodTracker } from '@/components/MoodTracker';
 import { CustomDzikir } from '@/components/CustomDzikir';
 import { ShareProgress } from '@/components/ShareProgress';
 import { PWAInstallPrompt } from '@/components/PWAInstallPrompt';
+import { GamificationPage } from '@/components/GamificationPage';
 import { useStreak } from '@/hooks/useStreak';
 import { dzikirPagiData, dzikirPetangData } from '@/data/dzikirData';
 
@@ -145,6 +146,9 @@ const Index = () => {
             onNavigate={setActiveTab} 
           />
         );
+      
+      case 'gamification':
+        return <GamificationPage onClose={() => setActiveTab('menu')} />;
       
       default:
         return null;

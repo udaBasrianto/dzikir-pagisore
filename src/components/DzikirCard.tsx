@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { CheckCircle, Circle, Plus, Minus } from 'lucide-react';
 import { AudioPlayer } from '@/components/AudioPlayer';
 import { useGlobalCounter } from '@/hooks/useGlobalCounter';
+import { useGamification } from '@/hooks/useGamification';
 
 interface DzikirItem {
   id: number;
@@ -24,6 +25,7 @@ interface DzikirCardProps {
 export const DzikirCard: React.FC<DzikirCardProps> = ({ item, onComplete, isCompleted }) => {
   const [currentCount, setCurrentCount] = useState(0);
   const { incrementDzikirRead } = useGlobalCounter();
+  const { incrementDzikirRead: incrementGamificationDzikir } = useGamification();
 
   const handleIncrement = () => {
     if (currentCount < item.count) {
@@ -32,6 +34,9 @@ export const DzikirCard: React.FC<DzikirCardProps> = ({ item, onComplete, isComp
       
       // Increment global counter for each dzikir read
       incrementDzikirRead();
+      
+      // Increment gamification counter
+      incrementGamificationDzikir();
       
       if (newCount === item.count) {
         onComplete(item.id);
