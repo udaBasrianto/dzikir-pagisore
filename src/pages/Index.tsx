@@ -147,7 +147,7 @@ const Index = () => {
           />
         );
       
-      case 'gamification':
+      case 'gamifikasi':
         return <GamificationPage onClose={() => setActiveTab('menu')} />;
       
       default:

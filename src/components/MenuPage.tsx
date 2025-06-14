@@ -33,6 +33,13 @@ export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
       description: 'Pantau kemajuan dzikir Anda',
       icon: Book,
       color: 'text-green-500'
+    },
+    {
+      id: 'gamifikasi',
+      title: '⭐ Gamifikasi',
+      description: 'Achievement, level, dan leaderboard',
+      icon: Settings,
+      color: 'text-purple-500'
     }
   ];
 
