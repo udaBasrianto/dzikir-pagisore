@@ -11,10 +11,14 @@ import { ShareProgress } from '@/components/ShareProgress';
 import { PWAInstallPrompt } from '@/components/PWAInstallPrompt';
 import { GamificationPage } from '@/components/GamificationPage';
 import { DzikirStatistics } from '@/components/DzikirStatistics';
+import { LoginPage } from '@/components/LoginPage';
+import { AdminDashboard } from '@/components/AdminDashboard';
+import { useAuth } from '@/contexts/AuthContext';
 import { useStreak } from '@/hooks/useStreak';
 import { dzikirPagiData, dzikirPetangData } from '@/data/dzikirData';
 
 const Index = () => {
+  const { isAuthenticated, loading } = useAuth();
   const [activeTab, setActiveTab] = useState('pagi');
   const [completedItems, setCompletedItems] = useState<Set<number>>(new Set());
   const [lastDzikirTab, setLastDzikirTab] = useState('pagi');
@@ -154,10 +158,28 @@ const Index = () => {
       case 'statistik':
         return <DzikirStatistics />;
       
+      case 'admin':
+        return <AdminDashboard onClose={() => setActiveTab('menu')} />;
+      
       default:
         return null;
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
 
   return (
     <div className="min-h-screen bg-background">

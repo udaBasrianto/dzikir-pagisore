@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from 'firebase/firestore';
-import { getAuth, signInAnonymously } from 'firebase/auth';
+import { getAuth, signInAnonymously, GoogleAuthProvider, signInWithPopup, User } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAdvhIbabO4xrLpjHOhy0wiVCtCE_VnyKQ",
@@ -30,6 +30,33 @@ export const signInAnonymousUser = async () => {
     console.error('Error signing in anonymously:', error);
     return false;
   }
+};
+
+// Google Sign In
+const googleProvider = new GoogleAuthProvider();
+
+export const signInWithGoogle = async () => {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    return result.user;
+  } catch (error) {
+    console.error('Error signing in with Google:', error);
+    throw error;
+  }
+};
+
+export const signOut = async () => {
+  try {
+    await auth.signOut();
+  } catch (error) {
+    console.error('Error signing out:', error);
+    throw error;
+  }
+};
+
+// Check if user is superadmin
+export const isSuperAdmin = (user: User | null) => {
+  return user?.email === 'id.basrianto@gmail.com';
 };
 
 export default app;
