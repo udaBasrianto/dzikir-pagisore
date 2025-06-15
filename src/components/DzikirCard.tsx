@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { CheckCircle, Circle, Plus, Minus } from 'lucide-react';
+import { CheckCircle, Circle, Plus, Minus, Eye, RotateCcw } from 'lucide-react';
 import { AudioPlayer } from '@/components/AudioPlayer';
 import { useGlobalCounter } from '@/hooks/useGlobalCounter';
 import { useGamification } from '@/hooks/useGamification';
+import { useDzikirCounter } from '@/hooks/useDzikirCounter';
 
 interface DzikirItem {
   id: number;
@@ -26,11 +27,24 @@ export const DzikirCard: React.FC<DzikirCardProps> = ({ item, onComplete, isComp
   const [currentCount, setCurrentCount] = useState(0);
   const { incrementDzikirRead } = useGlobalCounter();
   const { incrementDzikirRead: incrementGamificationDzikir } = useGamification();
+  
+  // Use dzikir counter hook for persistent data
+  const { 
+    count: persistentCount, 
+    totalViews, 
+    lastRead, 
+    incrementCount: incrementPersistentCount,
+    resetCount: resetPersistentCount,
+    resetAll: resetAllData
+  } = useDzikirCounter(item.id);
 
   const handleIncrement = () => {
     if (currentCount < item.count) {
       const newCount = currentCount + 1;
       setCurrentCount(newCount);
+      
+      // Increment persistent count
+      incrementPersistentCount();
       
       // Increment global counter for each dzikir read
       incrementDzikirRead();
@@ -50,8 +64,18 @@ export const DzikirCard: React.FC<DzikirCardProps> = ({ item, onComplete, isComp
     }
   };
 
-  const resetCounter = () => {
+  const resetSessionCounter = () => {
     setCurrentCount(0);
+  };
+
+  const formatDate = (date: Date | null) => {
+    if (!date) return '-';
+    return new Intl.DateTimeFormat('id-ID', { 
+      day: '2-digit', 
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
   };
 
   return (
@@ -70,6 +94,37 @@ export const DzikirCard: React.FC<DzikirCardProps> = ({ item, onComplete, isComp
                 <CheckCircle className="w-4 h-4 text-green-600 animate-scale-in" />
               )}
             </div>
+            
+            {/* View Stats */}
+            <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Eye className="w-3 h-3" />
+                <span>{totalViews} views</span>
+              </div>
+              {persistentCount > 0 && (
+                <div>
+                  Total dibaca: {persistentCount}x
+                </div>
+              )}
+              {lastRead && (
+                <div>
+                  Terakhir: {formatDate(lastRead)}
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {/* Reset All Button */}
+          <div className="flex flex-col gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={resetAllData}
+              className="text-xs h-8 px-2"
+              title="Reset semua data"
+            >
+              <RotateCcw className="w-3 h-3" />
+            </Button>
           </div>
         </div>
       </CardHeader>
@@ -139,10 +194,10 @@ export const DzikirCard: React.FC<DzikirCardProps> = ({ item, onComplete, isComp
             <Button
               variant="ghost"
               size="sm"
-              onClick={resetCounter}
+              onClick={resetSessionCounter}
               className="text-xs"
             >
-              Reset
+              Reset Sesi
             </Button>
             
             {currentCount === item.count && (
@@ -153,6 +208,28 @@ export const DzikirCard: React.FC<DzikirCardProps> = ({ item, onComplete, isComp
             )}
           </div>
         </div>
+        
+        {/* Statistics Summary */}
+        {(persistentCount > 0 || totalViews > 0) && (
+          <div className="pt-3 border-t border-border">
+            <div className="text-xs text-muted-foreground">
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div>
+                  <div className="font-medium text-foreground">{totalViews}</div>
+                  <div>Views</div>
+                </div>
+                <div>
+                  <div className="font-medium text-foreground">{persistentCount}</div>
+                  <div>Total Baca</div>
+                </div>
+                <div>
+                  <div className="font-medium text-foreground">{currentCount}</div>
+                  <div>Sesi Ini</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

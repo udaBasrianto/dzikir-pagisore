@@ -44,6 +44,13 @@ export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
       description: 'Achievement, level, dan leaderboard',
       icon: Settings,
       color: 'text-purple-500'
+    },
+    {
+      id: 'statistik',
+      title: '📊 Statistik Dzikir',
+      description: 'Lihat detail aktivitas dan progress dzikir',
+      icon: Book,
+      color: 'text-blue-600'
     }
   ];
 

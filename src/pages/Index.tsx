@@ -10,6 +10,7 @@ import { CustomDzikir } from '@/components/CustomDzikir';
 import { ShareProgress } from '@/components/ShareProgress';
 import { PWAInstallPrompt } from '@/components/PWAInstallPrompt';
 import { GamificationPage } from '@/components/GamificationPage';
+import { DzikirStatistics } from '@/components/DzikirStatistics';
 import { useStreak } from '@/hooks/useStreak';
 import { dzikirPagiData, dzikirPetangData } from '@/data/dzikirData';
 
@@ -149,6 +150,9 @@ const Index = () => {
       
       case 'gamifikasi':
         return <GamificationPage onClose={() => setActiveTab('menu')} />;
+      
+      case 'statistik':
+        return <DzikirStatistics />;
       
       default:
         return null;
