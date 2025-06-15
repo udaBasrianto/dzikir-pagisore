@@ -18,6 +18,14 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'inter': ['Inter', 'sans-serif'],
+				'poppins': ['Poppins', 'sans-serif'],
+				'roboto': ['Roboto', 'sans-serif'],
+				'open-sans': ['"Open Sans"', 'sans-serif'],
+				'lato': ['Lato', 'sans-serif'],
+				'arabic': ['Amiri', 'Traditional Arabic', 'Al Nile', 'Arabic Typesetting', 'serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

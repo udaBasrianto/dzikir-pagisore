@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Clock, Home, Book, Settings, Info, Heart, Bell, Palette, Volume2 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { ThemeCustomizer } from '@/components/ThemeCustomizer';
 import { NotificationSettings } from '@/components/NotificationSettings';
 import { AudioSettings } from '@/components/AudioSettings';
 import { GlobalStats } from '@/components/GlobalStats';
@@ -14,6 +15,7 @@ interface MenuPageProps {
 export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAudioSettings, setShowAudioSettings] = useState(false);
+  const [showThemeCustomizer, setShowThemeCustomizer] = useState(false);
   const menuItems = [
     {
       id: 'pagi',
@@ -66,6 +68,13 @@ export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
       icon: Palette,
       color: 'text-purple-500',
       component: <ThemeToggle />
+    },
+    {
+      title: 'Kustomisasi Tema',
+      description: 'Ubah warna dan font aplikasi',
+      icon: Palette,
+      color: 'text-pink-500',
+      action: () => setShowThemeCustomizer(true)
     }
   ];
 
@@ -90,6 +99,10 @@ export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
 
   if (showAudioSettings) {
     return <AudioSettings onClose={() => setShowAudioSettings(false)} />;
+  }
+
+  if (showThemeCustomizer) {
+    return <ThemeCustomizer onClose={() => setShowThemeCustomizer(false)} />;
   }
 
   return (

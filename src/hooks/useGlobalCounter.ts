@@ -36,9 +36,9 @@ export const useGlobalCounter = () => {
     const initializeFirebase = async () => {
       if (!isOnline) {
         // Load from localStorage when offline
-        const totalReads = parseInt(localStorage.getItem('global-dzikir-reads') || '1247');
-        const appInstalls = parseInt(localStorage.getItem('app-installs') || '156');
-        const activeUsers = parseInt(localStorage.getItem('active-users') || '89');
+        const totalReads = parseInt(localStorage.getItem('global-dzikir-reads') || '2547');
+        const appInstalls = parseInt(localStorage.getItem('app-installs') || '324');
+        const activeUsers = parseInt(localStorage.getItem('active-users') || '189');
         
         setStats({
           totalReads,
@@ -73,9 +73,9 @@ export const useGlobalCounter = () => {
       } catch (error) {
         console.error('Error initializing Firebase:', error);
         // Fallback to localStorage
-        const totalReads = parseInt(localStorage.getItem('global-dzikir-reads') || '1247');
-        const appInstalls = parseInt(localStorage.getItem('app-installs') || '156');
-        const activeUsers = parseInt(localStorage.getItem('active-users') || '89');
+        const totalReads = parseInt(localStorage.getItem('global-dzikir-reads') || '2547');
+        const appInstalls = parseInt(localStorage.getItem('app-installs') || '324');
+        const activeUsers = parseInt(localStorage.getItem('active-users') || '189');
         
         setStats({
           totalReads,
@@ -96,14 +96,14 @@ export const useGlobalCounter = () => {
       } catch (error) {
         console.error('Error incrementing dzikir read:', error);
         // Fallback to localStorage
-        const currentReads = parseInt(localStorage.getItem('global-dzikir-reads') || '1247');
+        const currentReads = parseInt(localStorage.getItem('global-dzikir-reads') || '2547');
         const newReads = currentReads + 1;
         localStorage.setItem('global-dzikir-reads', newReads.toString());
         setStats(prev => ({ ...prev, totalReads: newReads }));
       }
     } else {
       // Offline mode
-      const currentReads = parseInt(localStorage.getItem('global-dzikir-reads') || '1247');
+      const currentReads = parseInt(localStorage.getItem('global-dzikir-reads') || '2547');
       const newReads = currentReads + 1;
       localStorage.setItem('global-dzikir-reads', newReads.toString());
       setStats(prev => ({ ...prev, totalReads: newReads }));
@@ -117,14 +117,14 @@ export const useGlobalCounter = () => {
       } catch (error) {
         console.error('Error incrementing app install:', error);
         // Fallback to localStorage
-        const currentInstalls = parseInt(localStorage.getItem('app-installs') || '156');
+        const currentInstalls = parseInt(localStorage.getItem('app-installs') || '324');
         const newInstalls = currentInstalls + 1;
         localStorage.setItem('app-installs', newInstalls.toString());
         setStats(prev => ({ ...prev, appInstalls: newInstalls }));
       }
     } else {
       // Offline mode
-      const currentInstalls = parseInt(localStorage.getItem('app-installs') || '156');
+      const currentInstalls = parseInt(localStorage.getItem('app-installs') || '324');
       const newInstalls = currentInstalls + 1;
       localStorage.setItem('app-installs', newInstalls.toString());
       setStats(prev => ({ ...prev, appInstalls: newInstalls }));

@@ -26,9 +26,9 @@ export const getGlobalStats = async (): Promise<GlobalStats> => {
     } else {
       // Initialize stats document if it doesn't exist
       const initialStats = {
-        totalReads: 1247,
-        appInstalls: 156,
-        activeUsers: 89,
+        totalReads: 2547,
+        appInstalls: 324,
+        activeUsers: 189,
         lastUpdated: new Date()
       };
       await setDoc(docRef, initialStats);
@@ -38,9 +38,9 @@ export const getGlobalStats = async (): Promise<GlobalStats> => {
     console.error('Error getting global stats:', error);
     // Return fallback data
     return {
-      totalReads: 1247,
-      appInstalls: 156,
-      activeUsers: 89,
+      totalReads: 2547,
+      appInstalls: 324,
+      activeUsers: 189,
       lastUpdated: new Date()
     };
   }
