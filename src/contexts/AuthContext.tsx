@@ -3,6 +3,12 @@ import { User, onAuthStateChanged } from 'firebase/auth';
 import { auth, signInWithGoogle, signInAnonymousUser, signOut, isSuperAdmin } from '@/config/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '@/config/firebase';
+import { 
+  syncUserDataToFirebase, 
+  loadUserDataFromFirebase, 
+  applyUserDataToLocal, 
+  setupAutoSync 
+} from '@/services/userDataService';
 
 export type UserRole = 'superadmin' | 'admin' | 'contributor' | 'user' | 'anonymous';
 
@@ -40,6 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [dataSynced, setDataSynced] = useState(false);
 
   const getUserProfile = async (user: User): Promise<UserProfile> => {
     if (user.isAnonymous) {
@@ -95,8 +102,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (user) {
           const profile = await getUserProfile(user);
           setUserProfile(profile);
+          
+          // Sync user data with Firebase (only for non-anonymous users)
+          if (!user.isAnonymous && !dataSynced) {
+            try {
+              // First try to load data from Firebase
+              const firebaseData = await loadUserDataFromFirebase(user.uid);
+              
+              if (firebaseData) {
+                // Apply Firebase data to local storage
+                applyUserDataToLocal(firebaseData);
+              } else {
+                // Upload local data to Firebase
+                await syncUserDataToFirebase(user.uid);
+              }
+              
+              // Setup auto-sync
+              setupAutoSync(user.uid);
+              setDataSynced(true);
+            } catch (syncError) {
+              console.error('AuthContext: Error syncing user data:', syncError);
+            }
+          }
         } else {
           setUserProfile(null);
+          setDataSynced(false);
         }
         setUser(user);
       } catch (error) {
@@ -107,7 +137,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [dataSynced]);
 
   const signInGoogle = async () => {
     try {
@@ -129,6 +159,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     try {
+      // Sync data before logout (if user is not anonymous)
+      if (user && !user.isAnonymous) {
+        await syncUserDataToFirebase(user.uid);
+      }
       await signOut();
     } catch (error) {
       console.error('Error signing out:', error);
