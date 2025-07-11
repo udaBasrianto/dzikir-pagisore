@@ -88,7 +88,7 @@ export const DzikirCard: React.FC<DzikirCardProps> = ({ item, onComplete, isComp
             </h3>
             <div className="flex items-center gap-2 mt-2">
               <span className="text-sm text-muted-foreground">
-                Dibaca {item.count}x
+                Dibaca 100x
               </span>
               {isCompleted && (
                 <CheckCircle className="w-4 h-4 text-green-600 animate-scale-in" />
