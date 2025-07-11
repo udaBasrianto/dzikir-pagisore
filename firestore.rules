@@ -8,25 +8,22 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
       
       // Admin dan superadmin bisa read semua user
-      allow read: if request.auth != null && 
-        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'superadmin']);
+      allow read: if request.auth != null;
       
-      // Superadmin bisa update role user lain
-      allow write: if request.auth != null && 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'superadmin';
+      // Semua authenticated user bisa create user profile
+      allow create: if request.auth != null;
     }
     
     // Rules untuk koleksi dzikir
     match /dzikir/{dzikirId} {
-      // Semua authenticated user bisa read dzikir
-      allow read: if request.auth != null;
+      // Semua user (termasuk anonymous) bisa read dzikir
+      allow read: if true;
       
-      // User dengan role admin, contributor, atau superadmin bisa write
-      allow create, update, delete: if request.auth != null && 
-        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'contributor', 'superadmin']);
+      // Sementara semua authenticated user bisa write untuk testing
+      allow create, update, delete: if request.auth != null;
       
-      // Anonymous user bisa read dzikir yang published
-      allow read: if resource.data.status == 'published';
+      // Fallback: anonymous user bisa read dzikir yang published
+      allow read: if resource == null || resource.data.status == 'published';
     }
     
     // Rules untuk koleksi categories

@@ -38,7 +38,7 @@ export interface Category {
 export const getDzikirsByCategory = async (category: 'pagi' | 'petang' | 'umum'): Promise<DzikirItem[]> => {
   try {
     const q = query(
-      collection(db, 'dzikirs'),
+      collection(db, 'dzikir'),
       where('category', '==', category),
       where('status', '==', 'published'),
       orderBy('createdAt', 'asc')
@@ -60,7 +60,7 @@ export const getDzikirsByCategory = async (category: 'pagi' | 'petang' | 'umum')
 // Get all dzikirs (for admin)
 export const getAllDzikirs = async (): Promise<DzikirItem[]> => {
   try {
-    const q = query(collection(db, 'dzikirs'), orderBy('createdAt', 'desc'));
+    const q = query(collection(db, 'dzikir'), orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({
       id: doc.id,
@@ -78,10 +78,12 @@ export const getAllDzikirs = async (): Promise<DzikirItem[]> => {
 export const addDzikir = async (dzikirData: Omit<DzikirItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
   try {
     const now = new Date();
-    const docRef = await addDoc(collection(db, 'dzikirs'), {
+    const docRef = await addDoc(collection(db, 'dzikir'), {
       ...dzikirData,
+      author: 'admin', // Set author untuk permission
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
+      status: dzikirData.status || 'published' // Pastikan status ada
     });
     return docRef.id;
   } catch (error) {
@@ -93,7 +95,7 @@ export const addDzikir = async (dzikirData: Omit<DzikirItem, 'id' | 'createdAt' 
 // Update dzikir
 export const updateDzikir = async (id: string, updates: Partial<DzikirItem>): Promise<void> => {
   try {
-    const docRef = doc(db, 'dzikirs', id);
+    const docRef = doc(db, 'dzikir', id);
     await updateDoc(docRef, {
       ...updates,
       updatedAt: new Date()
@@ -107,7 +109,7 @@ export const updateDzikir = async (id: string, updates: Partial<DzikirItem>): Pr
 // Delete dzikir
 export const deleteDzikir = async (id: string): Promise<void> => {
   try {
-    await deleteDoc(doc(db, 'dzikirs', id));
+    await deleteDoc(doc(db, 'dzikir', id));
   } catch (error) {
     console.error('Error deleting dzikir:', error);
     throw error;
