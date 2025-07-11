@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock, Home, Book, Settings, Info, Heart, Bell, Palette, Volume2 } from 'lucide-react';
+import { Clock, Home, Book, Settings, Info, Heart, Bell, Palette, Volume2, Database } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { ThemeCustomizer } from '@/components/ThemeCustomizer';
 import { NotificationSettings } from '@/components/NotificationSettings';
@@ -51,6 +51,13 @@ export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
       description: 'Lihat detail aktivitas dan progress dzikir',
       icon: Book,
       color: 'text-blue-600'
+    },
+    {
+      id: 'crud',
+      title: '🗂️ Kelola Dzikir',
+      description: 'Tambah, edit, atau hapus konten dzikir',
+      icon: Database,
+      color: 'text-indigo-600'
     }
   ];
 

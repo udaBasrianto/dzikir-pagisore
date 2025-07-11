@@ -13,6 +13,7 @@ import { GamificationPage } from '@/components/GamificationPage';
 import { DzikirStatistics } from '@/components/DzikirStatistics';
 import { LoginPage } from '@/components/LoginPage';
 import { AdminDashboard } from '@/components/AdminDashboard';
+import { DzikirManagement } from '@/components/DzikirManagement';
 import { useAuth } from '@/contexts/AuthContext';
 import { useStreak } from '@/hooks/useStreak';
 import { dzikirPagiData, dzikirPetangData } from '@/data/dzikirData';
@@ -163,6 +164,9 @@ const Index = () => {
       
       case 'admin':
         return <AdminDashboard onClose={() => setActiveTab('menu')} />;
+      
+      case 'crud':
+        return <DzikirManagement />;
       
       default:
         return null;
