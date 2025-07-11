@@ -16,9 +16,12 @@ import { AdminDashboard } from '@/components/AdminDashboard';
 import { useAuth } from '@/contexts/AuthContext';
 import { useStreak } from '@/hooks/useStreak';
 import { dzikirPagiData, dzikirPetangData } from '@/data/dzikirData';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { DesktopSidebar } from '@/components/DesktopSidebar';
 
 const Index = () => {
   const { isAuthenticated, loading } = useAuth();
+  const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState('pagi');
   const [completedItems, setCompletedItems] = useState<Set<number>>(new Set());
   const [lastDzikirTab, setLastDzikirTab] = useState('pagi');
@@ -181,20 +184,44 @@ const Index = () => {
     return <LoginPage />;
   }
 
-  return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-md mx-auto px-4 py-6">
-        {renderContent()}
+  if (isMobile) {
+    // Mobile Layout
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="max-w-md mx-auto px-4 py-6">
+          {renderContent()}
+        </div>
+        <BottomNavigation 
+          activeTab={activeTab} 
+          onTabChange={setActiveTab} 
+        />
+        
+        {/* Floating Action Button - only show on dzikir tabs */}
+        {(activeTab === 'pagi' || activeTab === 'petang') && !floatingMenuAction && (
+          <FloatingActionButton onActionSelect={handleFloatingAction} />
+        )}
+        
+        {/* PWA Install Prompt */}
+        <PWAInstallPrompt />
       </div>
-      <BottomNavigation 
+    );
+  }
+
+  // Desktop Layout
+  return (
+    <div className="min-h-screen bg-background flex">
+      <DesktopSidebar 
         activeTab={activeTab} 
         onTabChange={setActiveTab} 
       />
       
-      {/* Floating Action Button - only show on dzikir tabs */}
-      {(activeTab === 'pagi' || activeTab === 'petang') && !floatingMenuAction && (
-        <FloatingActionButton onActionSelect={handleFloatingAction} />
-      )}
+      <div className="flex-1 flex flex-col">
+        <main className="flex-1 p-8 overflow-y-auto">
+          <div className="max-w-4xl mx-auto">
+            {renderContent()}
+          </div>
+        </main>
+      </div>
       
       {/* PWA Install Prompt */}
       <PWAInstallPrompt />
