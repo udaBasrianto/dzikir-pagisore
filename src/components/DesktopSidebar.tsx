@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Clock, CheckCircle, Menu, Trophy, BarChart3, Settings, Database } from 'lucide-react';
+import { Home, Clock, CheckCircle, Menu, Trophy, BarChart3, Settings, Database, BookOpen } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Minus, Plus } from 'lucide-react';
@@ -14,6 +14,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ activeTab, onTab
   const tabs = [
     { id: 'pagi', label: 'Dzikir Pagi', icon: Clock },
     { id: 'petang', label: 'Dzikir Petang', icon: Home },
+    { id: 'umum', label: 'Doa Umum', icon: BookOpen },
     { id: 'progress', label: 'Progress', icon: CheckCircle },
     { id: 'gamification', label: 'Gamifikasi', icon: Trophy },
     { id: 'statistics', label: 'Statistik', icon: BarChart3 },
