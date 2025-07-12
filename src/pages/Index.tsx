@@ -16,69 +16,30 @@ import { AdminDashboard } from '@/components/AdminDashboard';
 import { DzikirManagement } from '@/components/DzikirManagement';
 import { useAuth } from '@/contexts/AuthContext';
 import { useStreak } from '@/hooks/useStreak';
-import { dzikirPagiData, dzikirPetangData, DzikirItem } from '@/data/dzikirData';
-import { getDzikirsByCategory, DzikirItem as FirebaseDzikirItem } from '@/services/dzikirService';
+import { useDzikirData } from '@/hooks/useDzikirData';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { DesktopSidebar } from '@/components/DesktopSidebar';
 
 const Index = () => {
   const { isAuthenticated, loading } = useAuth();
   const isMobile = useIsMobile();
+  const { data: dzikirData, loading: dzikirLoading, refreshData } = useDzikirData();
   const [activeTab, setActiveTab] = useState('pagi');
   const [completedItems, setCompletedItems] = useState<Set<number>>(new Set());
   const [lastDzikirTab, setLastDzikirTab] = useState('pagi');
   const [floatingMenuAction, setFloatingMenuAction] = useState<string | null>(null);
   
-  // State for Firebase dzikir data
-  const [firebasePagiDzikir, setFirebasePagiDzikir] = useState<DzikirItem[]>([]);
-  const [firebasePetangDzikir, setFirebasePetangDzikir] = useState<DzikirItem[]>([]);
-  const [firebaseUmumDzikir, setFirebaseUmumDzikir] = useState<DzikirItem[]>([]);
-  
-  // Combine static and Firebase data
-  const allPagiDzikir = [...dzikirPagiData, ...firebasePagiDzikir];
-  const allPetangDzikir = [...dzikirPetangData, ...firebasePetangDzikir];
-  const allUmumDzikir = [...firebaseUmumDzikir];
-  
   // Use streak hook to track progress
-  const currentTotalItems = lastDzikirTab === 'pagi' ? allPagiDzikir.length : 
-                           lastDzikirTab === 'petang' ? allPetangDzikir.length : allUmumDzikir.length;
+  const currentTotalItems = lastDzikirTab === 'pagi' ? dzikirData.pagi.length : 
+                           lastDzikirTab === 'petang' ? dzikirData.petang.length : dzikirData.umum.length;
   useStreak(completedItems, currentTotalItems);
 
-  // Load Firebase dzikir data
+  // Refresh data when tab changes back to dzikir tabs
   useEffect(() => {
-    const loadFirebaseDzikir = async () => {
-      try {
-        const [pagiData, petangData, umumData] = await Promise.all([
-          getDzikirsByCategory('pagi'),
-          getDzikirsByCategory('petang'),
-          getDzikirsByCategory('umum')
-        ]);
-        
-        // Convert Firebase dzikir to match local format
-        const convertFirebaseDzikir = (data: FirebaseDzikirItem[]): DzikirItem[] => {
-          return data.map(item => ({
-            id: parseInt(item.id) || Math.random() * 1000000, // Generate unique ID
-            title: item.title,
-            arabic: item.arabic,
-            transliteration: item.transliteration,
-            translation: item.translation,
-            count: item.count,
-            category: item.category
-          }));
-        };
-        
-        setFirebasePagiDzikir(convertFirebaseDzikir(pagiData));
-        setFirebasePetangDzikir(convertFirebaseDzikir(petangData));
-        setFirebaseUmumDzikir(convertFirebaseDzikir(umumData));
-      } catch (error) {
-        console.error('Error loading Firebase dzikir:', error);
-      }
-    };
-    
-    if (isAuthenticated) {
-      loadFirebaseDzikir();
+    if (activeTab === 'pagi' || activeTab === 'petang' || activeTab === 'umum') {
+      refreshData();
     }
-  }, [isAuthenticated]);
+  }, [activeTab, refreshData]);
 
   // Load progress from localStorage
   useEffect(() => {
@@ -118,8 +79,8 @@ const Index = () => {
           return (
             <ShareProgress 
               completedItems={completedItems}
-              totalItems={lastDzikirTab === 'pagi' ? allPagiDzikir.length : 
-                         lastDzikirTab === 'petang' ? allPetangDzikir.length : allUmumDzikir.length}
+              totalItems={lastDzikirTab === 'pagi' ? dzikirData.pagi.length : 
+                         lastDzikirTab === 'petang' ? dzikirData.petang.length : dzikirData.umum.length}
               currentTab={lastDzikirTab}
               onClose={() => setFloatingMenuAction(null)}
             />
@@ -148,11 +109,11 @@ const Index = () => {
                 Mulai hari dengan dzikir dan doa
               </p>
               <div className="text-xs text-muted-foreground mt-2">
-                {completedItems.size}/{allPagiDzikir.length} selesai
+                {completedItems.size}/{dzikirData.pagi.length} selesai
               </div>
             </div>
             
-            {allPagiDzikir.map((item) => (
+            {dzikirData.pagi.map((item) => (
               <DzikirCard
                 key={item.id}
                 item={item}
@@ -174,11 +135,11 @@ const Index = () => {
                 Akhiri hari dengan dzikir dan doa
               </p>
               <div className="text-xs text-muted-foreground mt-2">
-                {completedItems.size}/{allPetangDzikir.length} selesai
+                {completedItems.size}/{dzikirData.petang.length} selesai
               </div>
             </div>
             
-            {allPetangDzikir.map((item) => (
+            {dzikirData.petang.map((item) => (
               <DzikirCard
                 key={item.id}
                 item={item}
@@ -200,11 +161,11 @@ const Index = () => {
                 Doa dan dzikir untuk sehari-hari
               </p>
               <div className="text-xs text-muted-foreground mt-2">
-                {completedItems.size}/{allUmumDzikir.length} selesai
+                {completedItems.size}/{dzikirData.umum.length} selesai
               </div>
             </div>
             
-            {allUmumDzikir.map((item) => (
+            {dzikirData.umum.map((item) => (
               <DzikirCard
                 key={item.id}
                 item={item}
@@ -219,8 +180,8 @@ const Index = () => {
         return (
           <EnhancedProgress 
             completedItems={completedItems}
-            totalItems={lastDzikirTab === 'pagi' ? allPagiDzikir.length : 
-                       lastDzikirTab === 'petang' ? allPetangDzikir.length : allUmumDzikir.length}
+            totalItems={lastDzikirTab === 'pagi' ? dzikirData.pagi.length : 
+                       lastDzikirTab === 'petang' ? dzikirData.petang.length : dzikirData.umum.length}
             currentTab={lastDzikirTab}
           />
         );
@@ -242,14 +203,14 @@ const Index = () => {
         return <AdminDashboard onClose={() => setActiveTab('menu')} />;
       
       case 'crud':
-        return <DzikirManagement />;
+        return <DzikirManagement onDataChange={refreshData} />;
       
       default:
         return null;
     }
   };
 
-  if (loading) {
+  if (loading || dzikirLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">

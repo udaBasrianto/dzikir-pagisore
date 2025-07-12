@@ -51,7 +51,11 @@ const categoryConfig = {
   umum: { label: 'Doa Umum', icon: BookOpen, color: 'bg-green-500' }
 };
 
-export const DzikirManagement: React.FC = () => {
+interface DzikirManagementProps {
+  onDataChange?: () => void;
+}
+
+export const DzikirManagement: React.FC<DzikirManagementProps> = ({ onDataChange }) => {
   const [dzikirs, setDzikirs] = useState<DzikirItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -80,6 +84,7 @@ export const DzikirManagement: React.FC = () => {
     try {
       await addDzikir(data);
       await loadDzikirs();
+      onDataChange?.(); // Notify parent to refresh
       setShowAddDialog(false);
       toast.success('Dzikir berhasil ditambahkan');
     } catch (error) {
@@ -92,6 +97,7 @@ export const DzikirManagement: React.FC = () => {
     try {
       await updateDzikir(id, data);
       await loadDzikirs();
+      onDataChange?.(); // Notify parent to refresh
       setEditingDzikir(null);
       toast.success('Dzikir berhasil diupdate');
     } catch (error) {
@@ -105,6 +111,7 @@ export const DzikirManagement: React.FC = () => {
       try {
         await deleteDzikir(id);
         await loadDzikirs();
+        onDataChange?.(); // Notify parent to refresh
         toast.success('Dzikir berhasil dihapus');
       } catch (error) {
         toast.error('Gagal menghapus dzikir');
