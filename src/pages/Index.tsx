@@ -39,7 +39,7 @@ const Index = () => {
     if (activeTab === 'pagi' || activeTab === 'petang' || activeTab === 'umum') {
       refreshData();
     }
-  }, [activeTab, refreshData]);
+  }, [activeTab]);
 
   // Load progress from localStorage
   useEffect(() => {

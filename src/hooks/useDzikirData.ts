@@ -16,19 +16,6 @@ export const useDzikirData = () => {
   });
   const [loading, setLoading] = useState(false);
 
-  // Convert Firebase dzikir to match local format
-  const convertFirebaseDzikir = useCallback((data: FirebaseDzikirItem[]): DzikirItem[] => {
-    return data.map(item => ({
-      id: parseInt(item.id) || Math.random() * 1000000, // Generate unique ID
-      title: item.title,
-      arabic: item.arabic,
-      transliteration: item.transliteration,
-      translation: item.translation,
-      count: item.count,
-      category: item.category
-    }));
-  }, []);
-
   // Refresh dzikir data from Firebase
   const refreshData = useCallback(async () => {
     setLoading(true);
@@ -39,9 +26,22 @@ export const useDzikirData = () => {
         getDzikirsByCategory('umum')
       ]);
       
-      const firebasePagiDzikir = convertFirebaseDzikir(pagiData);
-      const firebasePetangDzikir = convertFirebaseDzikir(petangData);
-      const firebaseUmumDzikir = convertFirebaseDzikir(umumData);
+      // Convert Firebase dzikir to match local format
+      const convertData = (data: FirebaseDzikirItem[]): DzikirItem[] => {
+        return data.map(item => ({
+          id: parseInt(item.id) || Math.random() * 1000000, // Generate unique ID
+          title: item.title,
+          arabic: item.arabic,
+          transliteration: item.transliteration,
+          translation: item.translation,
+          count: item.count,
+          category: item.category
+        }));
+      };
+      
+      const firebasePagiDzikir = convertData(pagiData);
+      const firebasePetangDzikir = convertData(petangData);
+      const firebaseUmumDzikir = convertData(umumData);
       
       setData({
         pagi: [...dzikirPagiData, ...firebasePagiDzikir],
@@ -53,7 +53,7 @@ export const useDzikirData = () => {
     } finally {
       setLoading(false);
     }
-  }, [convertFirebaseDzikir]);
+  }, []);
 
   // Initial load
   useEffect(() => {
