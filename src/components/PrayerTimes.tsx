@@ -34,22 +34,42 @@ export const PrayerTimes: React.FC = () => {
       const month = today.getMonth() + 1;
       const year = today.getFullYear();
 
-      const response = await fetch(
-        `https://api.aladhan.com/v1/timings/${day}-${month}-${year}?latitude=${lat}&longitude=${lon}&method=2`
+      // Fetch prayer times
+      const prayerResponse = await fetch(
+        `https://api.aladhan.com/v1/timings/${day}-${month}-${year}?latitude=${lat}&longitude=${lon}&method=20`
       );
       
-      if (!response.ok) throw new Error('Failed to fetch prayer times');
+      if (!prayerResponse.ok) throw new Error('Failed to fetch prayer times');
       
-      const data = await response.json();
+      const prayerData = await prayerResponse.json();
       
-      setPrayerTimes(data.data.timings);
+      // Fetch accurate location name using reverse geocoding
+      const locationResponse = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=id`
+      );
+      
+      let cityName = 'Unknown';
+      let countryName = 'Unknown';
+      
+      if (locationResponse.ok) {
+        const locationData = await locationResponse.json();
+        cityName = locationData.address.city || 
+                   locationData.address.town || 
+                   locationData.address.village || 
+                   locationData.address.county || 
+                   locationData.address.state || 
+                   'Unknown';
+        countryName = locationData.address.country || 'Unknown';
+      }
+      
+      setPrayerTimes(prayerData.data.timings);
       setLocation({
-        city: data.data.meta.timezone.split('/')[1] || 'Unknown',
-        country: data.data.meta.timezone.split('/')[0] || 'Unknown',
+        city: cityName,
+        country: countryName,
         latitude: lat,
         longitude: lon
       });
-      setDate(data.data.date.readable);
+      setDate(prayerData.data.date.readable);
     } catch (error) {
       toast({
         title: 'Error',
