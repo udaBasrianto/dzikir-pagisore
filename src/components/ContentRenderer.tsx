@@ -11,6 +11,7 @@ import { DzikirStatistics } from '@/components/DzikirStatistics';
 import { AdminDashboard } from '@/components/AdminDashboard';
 import { DzikirManagement } from '@/components/DzikirManagement';
 import { AIAssistant } from '@/components/AIAssistant';
+import { PrayerTimes } from '@/components/PrayerTimes';
 import { DzikirData } from '@/hooks/useDzikirData';
 
 interface ContentRendererProps {
@@ -129,6 +130,9 @@ export const ContentRenderer: React.FC<ContentRendererProps> = ({
     
     case 'ai':
       return <AIAssistant />;
+    
+    case 'sholat':
+      return <PrayerTimes />;
     
     default:
       return null;
