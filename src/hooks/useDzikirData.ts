@@ -28,8 +28,8 @@ export const useDzikirData = () => {
       
       // Convert Firebase dzikir to match local format
       const convertData = (data: FirebaseDzikirItem[]): DzikirItem[] => {
-        return data.map(item => ({
-          id: parseInt(item.id) || Math.random() * 1000000, // Generate unique ID
+        return data.map((item, index) => ({
+          id: item.id ? parseInt(item.id.replace(/\D/g, '')) || (Date.now() + index) : (Date.now() + index),
           title: item.title,
           arabic: item.arabic,
           transliteration: item.transliteration,
@@ -43,13 +43,20 @@ export const useDzikirData = () => {
       const firebasePetangDzikir = convertData(petangData);
       const firebaseUmumDzikir = convertData(umumData);
       
+      // Prioritize Firebase data, fallback to static data if empty
       setData({
-        pagi: [...dzikirPagiData, ...firebasePagiDzikir],
-        petang: [...dzikirPetangData, ...firebasePetangDzikir],
-        umum: [...firebaseUmumDzikir]
+        pagi: firebasePagiDzikir.length > 0 ? [...dzikirPagiData, ...firebasePagiDzikir] : dzikirPagiData,
+        petang: firebasePetangDzikir.length > 0 ? [...dzikirPetangData, ...firebasePetangDzikir] : dzikirPetangData,
+        umum: firebaseUmumDzikir
       });
     } catch (error) {
       console.error('Error loading Firebase dzikir:', error);
+      // Fallback to static data on error
+      setData({
+        pagi: dzikirPagiData,
+        petang: dzikirPetangData,
+        umum: []
+      });
     } finally {
       setLoading(false);
     }

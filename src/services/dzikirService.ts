@@ -37,20 +37,23 @@ export interface Category {
 // Get all dzikirs by category
 export const getDzikirsByCategory = async (category: 'pagi' | 'petang' | 'umum'): Promise<DzikirItem[]> => {
   try {
+    const dzikirRef = collection(db, 'dzikir');
     const q = query(
-      collection(db, 'dzikir'),
+      dzikirRef,
       where('category', '==', category),
-      where('status', '==', 'published'),
-      orderBy('createdAt', 'asc')
+      where('status', '==', 'published')
     );
     
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({
+    const items = querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
       createdAt: doc.data().createdAt?.toDate() || new Date(),
       updatedAt: doc.data().updatedAt?.toDate() || new Date()
     })) as DzikirItem[];
+    
+    // Sort by createdAt manually after fetching
+    return items.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
   } catch (error) {
     console.error('Error getting dzikirs by category:', error);
     return [];
