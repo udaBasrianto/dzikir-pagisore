@@ -12,6 +12,7 @@ import { AdminDashboard } from '@/components/AdminDashboard';
 import { DzikirManagement } from '@/components/DzikirManagement';
 import { AIAssistant } from '@/components/AIAssistant';
 import { PrayerTimes } from '@/components/PrayerTimes';
+import { StatisticsPage } from '@/components/StatisticsPage';
 import { DzikirData } from '@/hooks/useDzikirData';
 
 interface ContentRendererProps {
@@ -120,7 +121,14 @@ export const ContentRenderer: React.FC<ContentRendererProps> = ({
       return <GamificationPage onClose={() => setActiveTab('menu')} />;
     
     case 'statistik':
-      return <DzikirStatistics />;
+      return (
+        <StatisticsPage 
+          onClose={() => setActiveTab('menu')}
+          completedItems={completedItems}
+          totalItems={lastDzikirTab === 'pagi' ? dzikirData.pagi.length : 
+                     lastDzikirTab === 'petang' ? dzikirData.petang.length : dzikirData.umum.length}
+        />
+      );
     
     case 'admin':
       return <AdminDashboard onClose={() => setActiveTab('menu')} />;
