@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, onAuthStateChanged } from 'firebase/auth';
+import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth, signInWithGoogle, signInAnonymousUser, signOut, isSuperAdmin } from '@/config/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '@/config/firebase';
@@ -27,6 +27,8 @@ interface AuthContextType {
   loading: boolean;
   signInGoogle: () => Promise<void>;
   signInAnonymous: () => Promise<void>;
+  signInEmail: (email: string, password: string) => Promise<void>;
+  signUpEmail: (email: string, password: string, displayName: string) => Promise<void>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
   isSuperAdminUser: boolean;
@@ -157,6 +159,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const signInEmail = async (email: string, password: string) => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error: any) {
+      console.error('Error signing in with email:', error);
+      if (error.code === 'auth/user-not-found') {
+        throw new Error('Email tidak terdaftar');
+      } else if (error.code === 'auth/wrong-password') {
+        throw new Error('Password salah');
+      } else if (error.code === 'auth/invalid-email') {
+        throw new Error('Format email tidak valid');
+      }
+      throw error;
+    }
+  };
+
+  const signUpEmail = async (email: string, password: string, displayName: string) => {
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      if (result.user) {
+        await updateProfile(result.user, { displayName });
+      }
+    } catch (error: any) {
+      console.error('Error signing up with email:', error);
+      if (error.code === 'auth/email-already-in-use') {
+        throw new Error('Email sudah terdaftar');
+      } else if (error.code === 'auth/invalid-email') {
+        throw new Error('Format email tidak valid');
+      } else if (error.code === 'auth/weak-password') {
+        throw new Error('Password terlalu lemah');
+      }
+      throw error;
+    }
+  };
+
   const logout = async () => {
     try {
       // Sync data before logout (if user is not anonymous)
@@ -176,6 +213,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loading,
     signInGoogle,
     signInAnonymous,
+    signInEmail,
+    signUpEmail,
     logout,
     isAuthenticated: !!user,
     isSuperAdminUser: userProfile?.role === 'superadmin'
