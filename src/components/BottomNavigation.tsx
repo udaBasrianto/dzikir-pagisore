@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Clock, Menu, BookOpen, Bot, Moon } from 'lucide-react';
+import { Home, Clock, Menu, TrendingUp, BarChart3, Trophy } from 'lucide-react';
 import { useUserRole } from '@/hooks/useUserRole';
 
 interface BottomNavigationProps {
@@ -11,11 +11,11 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({ activeTab, o
   const { isAdmin } = useUserRole();
   
   const tabs = [
-    { id: 'pagi', label: 'Pagi', icon: Clock },
-    { id: 'petang', label: 'Petang', icon: Home },
-    { id: 'sholat', label: 'Sholat', icon: Moon },
-    { id: 'ai', label: 'AI', icon: Bot },
-    ...(isAdmin ? [{ id: 'menu', label: 'Menu', icon: Menu }] : []),
+    { id: 'pagi', label: 'Dzikir', icon: Clock },
+    { id: 'progress', label: 'Progress', icon: TrendingUp },
+    { id: 'statistik', label: 'Statistik', icon: BarChart3 },
+    { id: 'gamification', label: 'Prestasi', icon: Trophy },
+    { id: 'menu', label: 'Menu', icon: Menu },
   ];
 
   return (
