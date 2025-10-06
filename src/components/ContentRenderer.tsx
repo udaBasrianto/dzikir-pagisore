@@ -118,6 +118,7 @@ export const ContentRenderer: React.FC<ContentRendererProps> = ({
       );
     
     case 'gamifikasi':
+    case 'gamification':
       return <GamificationPage onClose={() => setActiveTab('menu')} />;
     
     case 'statistik':
@@ -140,6 +141,7 @@ export const ContentRenderer: React.FC<ContentRendererProps> = ({
       return <AIAssistant />;
     
     case 'sholat':
+    case 'prayer-times':
       return <PrayerTimes />;
     
     default:
