@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock, Home, Book, Settings, Info, Heart, Bell, Palette, Volume2, Database } from 'lucide-react';
+import { Clock, Home, Book, Settings, Info, Heart, Bell, Palette, Volume2, Database, Bot, CalendarDays } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { ThemeCustomizer } from '@/components/ThemeCustomizer';
 import { NotificationSettings } from '@/components/NotificationSettings';
@@ -32,6 +32,27 @@ export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
       color: 'text-blue-500'
     },
     {
+      id: 'sholat',
+      title: 'Dzikir Setelah Sholat',
+      description: 'Dzikir dan doa setelah sholat fardhu',
+      icon: Book,
+      color: 'text-teal-500'
+    },
+    {
+      id: 'prayer-times',
+      title: '🕌 Jadwal Sholat',
+      description: 'Lihat waktu sholat berdasarkan lokasi Anda',
+      icon: CalendarDays,
+      color: 'text-emerald-500'
+    },
+    {
+      id: 'ai',
+      title: '🤖 AI Assistant',
+      description: 'Tanya jawab tentang dzikir dan doa',
+      icon: Bot,
+      color: 'text-violet-500'
+    },
+    {
       id: 'progress',
       title: 'Progress Harian',
       description: 'Pantau kemajuan dzikir Anda',
@@ -39,7 +60,7 @@ export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
       color: 'text-green-500'
     },
     {
-      id: 'gamifikasi',
+      id: 'gamification',
       title: '⭐ Gamifikasi',
       description: 'Achievement, level, dan leaderboard',
       icon: Settings,
