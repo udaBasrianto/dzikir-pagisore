@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      user_progress: {
+        Row: {
+          created_at: string | null
+          current_streak: number | null
+          id: string
+          longest_streak: number | null
+          nickname: string | null
+          total_reads: number | null
+          total_xp: number | null
+          unlocked_achievements: string[] | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          current_streak?: number | null
+          id?: string
+          longest_streak?: number | null
+          nickname?: string | null
+          total_reads?: number | null
+          total_xp?: number | null
+          unlocked_achievements?: string[] | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          current_streak?: number | null
+          id?: string
+          longest_streak?: number | null
+          nickname?: string | null
+          total_reads?: number | null
+          total_xp?: number | null
+          unlocked_achievements?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
