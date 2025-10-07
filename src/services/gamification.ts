@@ -1,5 +1,4 @@
-import { db } from '@/config/firebase';
-import { doc, getDoc, setDoc, updateDoc, increment, collection, query, orderBy, limit, getDocs, where } from 'firebase/firestore';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface Achievement {
   id: string;
@@ -154,39 +153,62 @@ export const calculateLevel = (totalXP: number): UserLevel => {
 // User progress management
 export const getUserProgress = async (userId: string): Promise<UserProgress> => {
   try {
-    const docRef = doc(db, 'userProgress', userId);
-    const docSnap = await getDoc(docRef);
+    const { data, error } = await supabase
+      .from('user_progress')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
     
-    if (docSnap.exists()) {
-      const data = docSnap.data();
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
+    
+    if (data) {
+      const level = calculateLevel(data.total_xp || 0);
       return {
-        userId,
+        userId: data.user_id,
         nickname: data.nickname || 'Anonymous',
-        level: data.level || 1,
-        totalXP: data.totalXP || 0,
-        totalReads: data.totalReads || 0,
-        currentStreak: data.currentStreak || 0,
-        longestStreak: data.longestStreak || 0,
-        unlockedAchievements: data.unlockedAchievements || [],
-        completedChallenges: data.completedChallenges || [],
-        lastActiveDate: data.lastActiveDate?.toDate() || new Date()
+        level: level.level,
+        totalXP: data.total_xp || 0,
+        totalReads: data.total_reads || 0,
+        currentStreak: data.current_streak || 0,
+        longestStreak: data.longest_streak || 0,
+        unlockedAchievements: data.unlocked_achievements || [],
+        completedChallenges: [],
+        lastActiveDate: new Date(data.updated_at)
       };
     } else {
       // Initialize new user
-      const initialProgress: UserProgress = {
-        userId,
+      const newUser = {
+        user_id: userId,
         nickname: 'Anonymous',
-        level: 1,
-        totalXP: 0,
-        totalReads: 0,
-        currentStreak: 0,
-        longestStreak: 0,
-        unlockedAchievements: [],
-        completedChallenges: [],
-        lastActiveDate: new Date()
+        total_xp: 0,
+        total_reads: 0,
+        current_streak: 0,
+        longest_streak: 0,
+        unlocked_achievements: []
       };
-      await setDoc(docRef, initialProgress);
-      return initialProgress;
+      
+      const { data: insertedData, error: insertError } = await supabase
+        .from('user_progress')
+        .insert(newUser)
+        .select()
+        .single();
+      
+      if (insertError) throw insertError;
+      
+      return {
+        userId: insertedData.user_id,
+        nickname: insertedData.nickname || 'Anonymous',
+        level: 1,
+        totalXP: insertedData.total_xp || 0,
+        totalReads: insertedData.total_reads || 0,
+        currentStreak: insertedData.current_streak || 0,
+        longestStreak: insertedData.longest_streak || 0,
+        unlockedAchievements: insertedData.unlocked_achievements || [],
+        completedChallenges: [],
+        lastActiveDate: new Date(insertedData.created_at)
+      };
     }
   } catch (error) {
     console.error('Error getting user progress:', error);
@@ -199,11 +221,21 @@ export const updateUserProgress = async (
   updates: Partial<UserProgress>
 ): Promise<void> => {
   try {
-    const docRef = doc(db, 'userProgress', userId);
-    await updateDoc(docRef, {
-      ...updates,
-      lastActiveDate: new Date()
-    });
+    const dbUpdates: any = {};
+    
+    if (updates.nickname !== undefined) dbUpdates.nickname = updates.nickname;
+    if (updates.totalXP !== undefined) dbUpdates.total_xp = updates.totalXP;
+    if (updates.totalReads !== undefined) dbUpdates.total_reads = updates.totalReads;
+    if (updates.currentStreak !== undefined) dbUpdates.current_streak = updates.currentStreak;
+    if (updates.longestStreak !== undefined) dbUpdates.longest_streak = updates.longestStreak;
+    if (updates.unlockedAchievements !== undefined) dbUpdates.unlocked_achievements = updates.unlockedAchievements;
+    
+    const { error } = await supabase
+      .from('user_progress')
+      .update(dbUpdates)
+      .eq('user_id', userId);
+    
+    if (error) throw error;
   } catch (error) {
     console.error('Error updating user progress:', error);
     throw error;
@@ -261,25 +293,25 @@ export const checkAchievements = async (userId: string, progress: UserProgress):
 
 export const getLeaderboard = async (limit_count: number = 10): Promise<LeaderboardEntry[]> => {
   try {
-    const q = query(
-      collection(db, 'userProgress'),
-      orderBy('totalXP', 'desc'),
-      limit(limit_count)
-    );
+    const { data, error } = await supabase
+      .from('user_progress')
+      .select('*')
+      .order('total_xp', { ascending: false })
+      .limit(limit_count);
     
-    const querySnapshot = await getDocs(q);
-    const leaderboard: LeaderboardEntry[] = [];
+    if (error) throw error;
     
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      leaderboard.push({
-        userId: doc.id,
-        nickname: data.nickname || 'Anonymous',
-        level: data.level || 1,
-        totalXP: data.totalXP || 0,
-        totalReads: data.totalReads || 0,
-        streak: data.currentStreak || 0
-      });
+    const leaderboard: LeaderboardEntry[] = (data || []).map((item) => {
+      const level = calculateLevel(item.total_xp || 0);
+      
+      return {
+        userId: item.user_id,
+        nickname: item.nickname || 'Anonymous',
+        level: level.level,
+        totalXP: item.total_xp || 0,
+        totalReads: item.total_reads || 0,
+        streak: item.current_streak || 0
+      };
     });
     
     return leaderboard;
