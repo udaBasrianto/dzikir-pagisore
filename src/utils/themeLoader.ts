@@ -1,9 +1,27 @@
+// Font size options for reference
+const fontSizeClasses = ['font-size-small', 'font-size-medium', 'font-size-large', 'font-size-xlarge'];
+
 // Load saved theme customizations on app start
 export const loadSavedThemeCustomizations = () => {
   // Load saved font
   const savedFontValue = localStorage.getItem('dzikir-font-value');
   if (savedFontValue) {
     document.body.style.fontFamily = savedFontValue;
+  }
+
+  // Load saved Arabic font
+  const savedArabicFontValue = localStorage.getItem('dzikir-arabic-font-value');
+  if (savedArabicFontValue) {
+    document.documentElement.style.setProperty('--arabic-font', savedArabicFontValue);
+  }
+
+  // Load saved font size
+  const savedFontSizeClass = localStorage.getItem('dzikir-font-size-class');
+  if (savedFontSizeClass) {
+    fontSizeClasses.forEach(cls => {
+      document.documentElement.classList.remove(cls);
+    });
+    document.documentElement.classList.add(savedFontSizeClass);
   }
 
   // Load saved color theme (only for light mode)
