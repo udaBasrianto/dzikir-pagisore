@@ -24,26 +24,30 @@ export const loadSavedThemeCustomizations = () => {
     document.documentElement.classList.add(savedFontSizeClass);
   }
 
-  // Load saved color theme (only for light mode)
-  const savedColor = localStorage.getItem('dzikir-color-theme');
-  if (savedColor && !document.documentElement.classList.contains('dark')) {
-    const colorThemes = [
-      { name: 'Hijau', primary: '142 76% 36%', secondary: '142 30% 94%', accent: '142 30% 94%' },
-      { name: 'Biru', primary: '221 83% 53%', secondary: '221 30% 94%', accent: '221 30% 94%' },
-      { name: 'Ungu', primary: '262 83% 58%', secondary: '262 30% 94%', accent: '262 30% 94%' },
-      { name: 'Merah', primary: '0 72% 51%', secondary: '0 30% 94%', accent: '0 30% 94%' },
-      { name: 'Orange', primary: '24 95% 53%', secondary: '24 30% 94%', accent: '24 30% 94%' },
-      { name: 'Pink', primary: '330 81% 60%', secondary: '330 30% 94%', accent: '330 30% 94%' },
-      { name: 'Indigo', primary: '239 84% 67%', secondary: '239 30% 94%', accent: '239 30% 94%' },
-      { name: 'Teal', primary: '173 58% 39%', secondary: '173 30% 94%', accent: '173 30% 94%' },
-    ];
-
-    const colorTheme = colorThemes.find(t => t.name === savedColor);
-    if (colorTheme) {
+  // Load saved color theme based on current mode
+  const isDarkMode = document.documentElement.classList.contains('dark');
+  
+  if (isDarkMode) {
+    const savedDarkPrimary = localStorage.getItem('dzikir-dark-color-primary');
+    const savedDarkSecondary = localStorage.getItem('dzikir-dark-color-secondary');
+    const savedDarkAccent = localStorage.getItem('dzikir-dark-color-accent');
+    
+    if (savedDarkPrimary) {
       const root = document.documentElement;
-      root.style.setProperty('--primary', colorTheme.primary);
-      root.style.setProperty('--secondary', colorTheme.secondary);
-      root.style.setProperty('--accent', colorTheme.accent);
+      root.style.setProperty('--primary', savedDarkPrimary);
+      root.style.setProperty('--secondary', savedDarkSecondary || '142 30% 15%');
+      root.style.setProperty('--accent', savedDarkAccent || '142 30% 15%');
+    }
+  } else {
+    const savedLightPrimary = localStorage.getItem('dzikir-light-color-primary');
+    const savedLightSecondary = localStorage.getItem('dzikir-light-color-secondary');
+    const savedLightAccent = localStorage.getItem('dzikir-light-color-accent');
+    
+    if (savedLightPrimary) {
+      const root = document.documentElement;
+      root.style.setProperty('--primary', savedLightPrimary);
+      root.style.setProperty('--secondary', savedLightSecondary || '142 30% 94%');
+      root.style.setProperty('--accent', savedLightAccent || '142 30% 94%');
     }
   }
 };

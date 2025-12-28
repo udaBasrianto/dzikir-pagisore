@@ -9,7 +9,7 @@ interface ThemeCustomizerProps {
   onClose: () => void;
 }
 
-const colorThemes = [
+const lightColorThemes = [
   { name: 'Hijau', primary: '142 76% 36%', secondary: '142 30% 94%', accent: '142 30% 94%' },
   { name: 'Biru', primary: '221 83% 53%', secondary: '221 30% 94%', accent: '221 30% 94%' },
   { name: 'Ungu', primary: '262 83% 58%', secondary: '262 30% 94%', accent: '262 30% 94%' },
@@ -18,6 +18,17 @@ const colorThemes = [
   { name: 'Pink', primary: '330 81% 60%', secondary: '330 30% 94%', accent: '330 30% 94%' },
   { name: 'Indigo', primary: '239 84% 67%', secondary: '239 30% 94%', accent: '239 30% 94%' },
   { name: 'Teal', primary: '173 58% 39%', secondary: '173 30% 94%', accent: '173 30% 94%' },
+];
+
+const darkColorThemes = [
+  { name: 'Hijau', primary: '142 69% 58%', secondary: '142 30% 15%', accent: '142 30% 15%' },
+  { name: 'Biru', primary: '221 83% 65%', secondary: '221 30% 15%', accent: '221 30% 15%' },
+  { name: 'Ungu', primary: '262 83% 68%', secondary: '262 30% 15%', accent: '262 30% 15%' },
+  { name: 'Merah', primary: '0 72% 60%', secondary: '0 30% 15%', accent: '0 30% 15%' },
+  { name: 'Orange', primary: '24 95% 60%', secondary: '24 30% 15%', accent: '24 30% 15%' },
+  { name: 'Pink', primary: '330 81% 70%', secondary: '330 30% 15%', accent: '330 30% 15%' },
+  { name: 'Indigo', primary: '239 84% 75%', secondary: '239 30% 15%', accent: '239 30% 15%' },
+  { name: 'Teal', primary: '173 58% 50%', secondary: '173 30% 15%', accent: '173 30% 15%' },
 ];
 
 const fontOptions = [
@@ -44,38 +55,56 @@ const fontSizeOptions = [
 
 export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ onClose }) => {
   const { theme } = useTheme();
-  const [selectedColor, setSelectedColor] = useState('Hijau');
+  const [selectedLightColor, setSelectedLightColor] = useState('Hijau');
+  const [selectedDarkColor, setSelectedDarkColor] = useState('Hijau');
   const [selectedFont, setSelectedFont] = useState('Poppins (Default)');
   const [selectedArabicFont, setSelectedArabicFont] = useState('Amiri (Default)');
   const [selectedFontSize, setSelectedFontSize] = useState('medium');
 
   useEffect(() => {
-    const savedColor = localStorage.getItem('dzikir-color-theme');
+    const savedLightColor = localStorage.getItem('dzikir-light-color-theme');
+    const savedDarkColor = localStorage.getItem('dzikir-dark-color-theme');
     const savedFont = localStorage.getItem('dzikir-font-family');
     const savedArabicFont = localStorage.getItem('dzikir-arabic-font');
     const savedFontSize = localStorage.getItem('dzikir-font-size');
     
-    if (savedColor) setSelectedColor(savedColor);
+    if (savedLightColor) setSelectedLightColor(savedLightColor);
+    if (savedDarkColor) setSelectedDarkColor(savedDarkColor);
     if (savedFont) setSelectedFont(savedFont);
     if (savedArabicFont) setSelectedArabicFont(savedArabicFont);
     if (savedFontSize) setSelectedFontSize(savedFontSize);
   }, []);
 
-  const applyColorTheme = (colorTheme: typeof colorThemes[0]) => {
+  const applyLightColorTheme = (colorTheme: typeof lightColorThemes[0]) => {
     const root = document.documentElement;
     
-    if (theme === 'dark') {
-      root.style.setProperty('--primary', '142 69% 58%');
-      root.style.setProperty('--secondary', '217.2 32.6% 17.5%');
-      root.style.setProperty('--accent', '217.2 32.6% 17.5%');
-    } else {
+    if (theme !== 'dark') {
       root.style.setProperty('--primary', colorTheme.primary);
       root.style.setProperty('--secondary', colorTheme.secondary);
       root.style.setProperty('--accent', colorTheme.accent);
     }
     
-    setSelectedColor(colorTheme.name);
-    localStorage.setItem('dzikir-color-theme', colorTheme.name);
+    setSelectedLightColor(colorTheme.name);
+    localStorage.setItem('dzikir-light-color-theme', colorTheme.name);
+    localStorage.setItem('dzikir-light-color-primary', colorTheme.primary);
+    localStorage.setItem('dzikir-light-color-secondary', colorTheme.secondary);
+    localStorage.setItem('dzikir-light-color-accent', colorTheme.accent);
+  };
+
+  const applyDarkColorTheme = (colorTheme: typeof darkColorThemes[0]) => {
+    const root = document.documentElement;
+    
+    if (theme === 'dark') {
+      root.style.setProperty('--primary', colorTheme.primary);
+      root.style.setProperty('--secondary', colorTheme.secondary);
+      root.style.setProperty('--accent', colorTheme.accent);
+    }
+    
+    setSelectedDarkColor(colorTheme.name);
+    localStorage.setItem('dzikir-dark-color-theme', colorTheme.name);
+    localStorage.setItem('dzikir-dark-color-primary', colorTheme.primary);
+    localStorage.setItem('dzikir-dark-color-secondary', colorTheme.secondary);
+    localStorage.setItem('dzikir-dark-color-accent', colorTheme.accent);
   };
 
   const applyFont = (font: typeof fontOptions[0]) => {
@@ -104,17 +133,33 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ onClose }) => 
     localStorage.setItem('dzikir-font-size-class', size.class);
   };
 
-  // Apply saved settings on mount
+  // Apply saved settings on mount and theme change
   useEffect(() => {
-    const savedColor = localStorage.getItem('dzikir-color-theme');
+    const root = document.documentElement;
     const savedFontValue = localStorage.getItem('dzikir-font-value');
     const savedArabicFontValue = localStorage.getItem('dzikir-arabic-font-value');
     const savedFontSizeClass = localStorage.getItem('dzikir-font-size-class');
     
-    if (savedColor) {
-      const colorTheme = colorThemes.find(t => t.name === savedColor);
-      if (colorTheme && theme !== 'dark') {
-        applyColorTheme(colorTheme);
+    // Apply color theme based on current mode
+    if (theme === 'dark') {
+      const savedDarkPrimary = localStorage.getItem('dzikir-dark-color-primary');
+      const savedDarkSecondary = localStorage.getItem('dzikir-dark-color-secondary');
+      const savedDarkAccent = localStorage.getItem('dzikir-dark-color-accent');
+      
+      if (savedDarkPrimary) {
+        root.style.setProperty('--primary', savedDarkPrimary);
+        root.style.setProperty('--secondary', savedDarkSecondary || '142 30% 15%');
+        root.style.setProperty('--accent', savedDarkAccent || '142 30% 15%');
+      }
+    } else {
+      const savedLightPrimary = localStorage.getItem('dzikir-light-color-primary');
+      const savedLightSecondary = localStorage.getItem('dzikir-light-color-secondary');
+      const savedLightAccent = localStorage.getItem('dzikir-light-color-accent');
+      
+      if (savedLightPrimary) {
+        root.style.setProperty('--primary', savedLightPrimary);
+        root.style.setProperty('--secondary', savedLightSecondary || '142 30% 94%');
+        root.style.setProperty('--accent', savedLightAccent || '142 30% 94%');
       }
     }
     
@@ -123,7 +168,7 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ onClose }) => 
     }
 
     if (savedArabicFontValue) {
-      document.documentElement.style.setProperty('--arabic-font', savedArabicFontValue);
+      root.style.setProperty('--arabic-font', savedArabicFontValue);
     }
 
     if (savedFontSizeClass) {
@@ -135,17 +180,26 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ onClose }) => 
   }, [theme]);
 
   const resetToDefault = () => {
-    const defaultColor = colorThemes[0];
+    const defaultLightColor = lightColorThemes[0];
+    const defaultDarkColor = darkColorThemes[0];
     const defaultFont = fontOptions[0];
     const defaultArabicFont = arabicFontOptions[0];
     const defaultFontSize = fontSizeOptions[1]; // medium
     
-    applyColorTheme(defaultColor);
+    applyLightColorTheme(defaultLightColor);
+    applyDarkColorTheme(defaultDarkColor);
     applyFont(defaultFont);
     applyArabicFont(defaultArabicFont);
     applyFontSize(defaultFontSize);
     
-    localStorage.removeItem('dzikir-color-theme');
+    localStorage.removeItem('dzikir-light-color-theme');
+    localStorage.removeItem('dzikir-light-color-primary');
+    localStorage.removeItem('dzikir-light-color-secondary');
+    localStorage.removeItem('dzikir-light-color-accent');
+    localStorage.removeItem('dzikir-dark-color-theme');
+    localStorage.removeItem('dzikir-dark-color-primary');
+    localStorage.removeItem('dzikir-dark-color-secondary');
+    localStorage.removeItem('dzikir-dark-color-accent');
     localStorage.removeItem('dzikir-font-family');
     localStorage.removeItem('dzikir-font-value');
     localStorage.removeItem('dzikir-arabic-font');
@@ -232,23 +286,22 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ onClose }) => 
         </CardContent>
       </Card>
 
-      {/* Color Themes */}
+      {/* Light Mode Color Themes */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Palette className="w-5 h-5" />
-            Warna Tema
+            Warna Tema (Mode Terang)
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
-            {colorThemes.map((colorTheme) => (
+            {lightColorThemes.map((colorTheme) => (
               <Button
                 key={colorTheme.name}
-                variant={selectedColor === colorTheme.name ? "default" : "outline"}
+                variant={selectedLightColor === colorTheme.name ? "default" : "outline"}
                 className="h-auto p-3 flex items-center gap-3"
-                onClick={() => applyColorTheme(colorTheme)}
-                disabled={theme === 'dark'}
+                onClick={() => applyLightColorTheme(colorTheme)}
               >
                 <div 
                   className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
@@ -258,11 +311,34 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ onClose }) => 
               </Button>
             ))}
           </div>
-          {theme === 'dark' && (
-            <p className="text-xs text-muted-foreground text-center mt-2">
-              Warna kustom tidak tersedia di mode gelap
-            </p>
-          )}
+        </CardContent>
+      </Card>
+
+      {/* Dark Mode Color Themes */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Palette className="w-5 h-5" />
+            Warna Tema (Mode Gelap)
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            {darkColorThemes.map((colorTheme) => (
+              <Button
+                key={colorTheme.name}
+                variant={selectedDarkColor === colorTheme.name ? "default" : "outline"}
+                className="h-auto p-3 flex items-center gap-3"
+                onClick={() => applyDarkColorTheme(colorTheme)}
+              >
+                <div 
+                  className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
+                  style={{ backgroundColor: `hsl(${colorTheme.primary})` }}
+                />
+                <span className="text-sm">{colorTheme.name}</span>
+              </Button>
+            ))}
+          </div>
         </CardContent>
       </Card>
 
