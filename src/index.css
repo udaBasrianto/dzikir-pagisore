@@ -104,10 +104,32 @@
 
   /* Arabic text styling */
   .font-arabic {
-    font-family: 'Amiri', 'Traditional Arabic', 'Al Nile', 'Arabic Typesetting', serif;
+    font-family: var(--arabic-font, 'Amiri'), 'Traditional Arabic', 'Al Nile', 'Arabic Typesetting', serif;
+    font-size: var(--arabic-font-size, 1.5rem);
     line-height: 2.2;
     direction: rtl;
     text-align: right;
+  }
+
+  /* Font size scaling */
+  .font-size-small {
+    --arabic-font-size: 1.25rem;
+    --base-font-size: 0.875rem;
+  }
+
+  .font-size-medium {
+    --arabic-font-size: 1.5rem;
+    --base-font-size: 1rem;
+  }
+
+  .font-size-large {
+    --arabic-font-size: 1.875rem;
+    --base-font-size: 1.125rem;
+  }
+
+  .font-size-xlarge {
+    --arabic-font-size: 2.25rem;
+    --base-font-size: 1.25rem;
   }
 
   /* Mobile optimizations */
@@ -117,7 +139,7 @@
     }
     
     .font-arabic {
-      font-size: 1.1rem;
+      font-size: calc(var(--arabic-font-size, 1.5rem) * 0.85);
       line-height: 2.5;
     }
   }
