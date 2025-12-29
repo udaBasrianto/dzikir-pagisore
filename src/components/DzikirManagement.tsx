@@ -34,7 +34,8 @@ import {
   Eye,
   Clock,
   Home,
-  BookOpen
+  BookOpen,
+  ShieldAlert
 } from 'lucide-react';
 import { 
   getAllDzikirs, 
@@ -44,6 +45,7 @@ import {
   DzikirItem 
 } from '@/services/dzikirService';
 import { toast } from 'sonner';
+import { useUserRole } from '@/hooks/useUserRole';
 
 const categoryConfig = {
   pagi: { label: 'Dzikir Pagi', icon: Clock, color: 'bg-orange-500' },
@@ -56,12 +58,28 @@ interface DzikirManagementProps {
 }
 
 export const DzikirManagement: React.FC<DzikirManagementProps> = ({ onDataChange }) => {
+  const { isAdmin, loading: roleLoading } = useUserRole();
   const [dzikirs, setDzikirs] = useState<DzikirItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState<'all' | 'pagi' | 'petang' | 'umum'>('all');
   const [editingDzikir, setEditingDzikir] = useState<DzikirItem | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
+
+  // Block non-admin access
+  if (!roleLoading && !isAdmin) {
+    return (
+      <Card className="border-destructive">
+        <CardContent className="p-8 text-center">
+          <ShieldAlert className="w-16 h-16 mx-auto text-destructive mb-4" />
+          <h3 className="text-xl font-semibold mb-2">Akses Ditolak</h3>
+          <p className="text-muted-foreground">
+            Hanya admin yang dapat mengakses halaman manajemen dzikir.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   useEffect(() => {
     loadDzikirs();
