@@ -25,7 +25,8 @@ import {
   Shield, 
   User, 
   UserPlus,
-  MoreHorizontal
+  MoreHorizontal,
+  ShieldAlert
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -36,6 +37,7 @@ import {
 import { getAllUsers, updateUserRole, UserData } from '@/services/userService';
 import { UserRole } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { useUserRole } from '@/hooks/useUserRole';
 
 const roleConfig = {
   superadmin: { label: 'Super Admin', icon: Crown, color: 'bg-purple-500' },
@@ -45,10 +47,26 @@ const roleConfig = {
 };
 
 export const UserManagement: React.FC = () => {
+  const { isAdmin, loading: roleLoading } = useUserRole();
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState<UserRole | 'all'>('all');
+
+  // Block non-admin access
+  if (!roleLoading && !isAdmin) {
+    return (
+      <Card className="border-destructive">
+        <CardContent className="p-8 text-center">
+          <ShieldAlert className="w-16 h-16 mx-auto text-destructive mb-4" />
+          <h3 className="text-xl font-semibold mb-2">Akses Ditolak</h3>
+          <p className="text-muted-foreground">
+            Hanya admin yang dapat mengakses halaman manajemen pengguna.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   useEffect(() => {
     loadUsers();
