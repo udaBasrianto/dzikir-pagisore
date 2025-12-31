@@ -12,12 +12,15 @@ import {
   Crown,
   Shield,
   User,
-  UserPlus
+  UserPlus,
+  Loader2
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUserRole } from '@/hooks/useUserRole';
 import { UserManagement } from './UserManagement';
 import { DzikirManagement } from './DzikirManagement';
 import { AdminStats } from './AdminStats';
+import { toast } from 'sonner';
 
 interface AdminDashboardProps {
   onClose: () => void;
@@ -25,23 +28,32 @@ interface AdminDashboardProps {
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const { userProfile } = useAuth();
+  const { isAdmin, loading: roleLoading } = useUserRole();
   const [activeTab, setActiveTab] = useState('overview');
 
-  if (!userProfile || userProfile.role !== 'superadmin') {
+  // Auto redirect non-admin users
+  useEffect(() => {
+    if (!roleLoading && !isAdmin) {
+      toast.error('Akses ditolak. Anda bukan admin.');
+      onClose();
+    }
+  }, [roleLoading, isAdmin, onClose]);
+
+  // Show loading while checking role
+  if (roleLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="max-w-md">
-          <CardContent className="p-6 text-center">
-            <Shield className="w-12 h-12 mx-auto mb-4 text-destructive" />
-            <h2 className="text-xl font-semibold mb-2">Akses Ditolak</h2>
-            <p className="text-muted-foreground mb-4">
-              Anda tidak memiliki izin untuk mengakses halaman admin.
-            </p>
-            <Button onClick={onClose}>Kembali</Button>
-          </CardContent>
-        </Card>
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-muted-foreground">Memeriksa akses...</p>
+        </div>
       </div>
     );
+  }
+
+  // Don't render anything if not admin (will redirect)
+  if (!isAdmin) {
+    return null;
   }
 
   return (
