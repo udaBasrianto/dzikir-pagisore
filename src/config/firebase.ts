@@ -54,9 +54,11 @@ export const signOut = async () => {
   }
 };
 
-// Check if user is superadmin
+// Note: Admin check is now handled by adminService via Supabase database
+// This function is kept for backward compatibility but should use checkAdminStatus from adminService
 export const isSuperAdmin = (user: User | null) => {
-  return user?.email === 'id.basrianto@gmail.com';
+  // This is now a placeholder - actual check happens in AuthContext using adminService
+  return false;
 };
 
 export default app;

@@ -20,6 +20,7 @@ import { useUserRole } from '@/hooks/useUserRole';
 import { UserManagement } from './UserManagement';
 import { DzikirManagement } from './DzikirManagement';
 import { AdminStats } from './AdminStats';
+import { AdminManagement } from './AdminManagement';
 import { toast } from 'sonner';
 
 interface AdminDashboardProps {
@@ -83,10 +84,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <BarChart3 className="w-4 h-4" />
               Overview
+            </TabsTrigger>
+            <TabsTrigger value="admins" className="flex items-center gap-2">
+              <Crown className="w-4 h-4" />
+              Admin
             </TabsTrigger>
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
@@ -104,6 +109,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
           <TabsContent value="overview">
             <AdminStats />
+          </TabsContent>
+
+          <TabsContent value="admins">
+            <AdminManagement />
           </TabsContent>
 
           <TabsContent value="users">

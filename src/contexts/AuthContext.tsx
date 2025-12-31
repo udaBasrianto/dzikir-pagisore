@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { auth, signInWithGoogle, signInAnonymousUser, signOut, isSuperAdmin } from '@/config/firebase';
+import { auth, signInWithGoogle, signInAnonymousUser, signOut } from '@/config/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { 
@@ -9,6 +9,7 @@ import {
   applyUserDataToLocal, 
   setupAutoSync 
 } from '@/services/userDataService';
+import { checkAdminStatus } from '@/services/adminService';
 
 export type UserRole = 'superadmin' | 'admin' | 'contributor' | 'user' | 'anonymous';
 
@@ -62,8 +63,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
     }
 
+    // Check admin status from Supabase database
+    const { isAdmin, role: adminRole } = await checkAdminStatus(user.uid, user.email || '');
+    
     const userDocRef = doc(db, 'users', user.uid);
     const userDoc = await getDoc(userDocRef);
+
+    // Determine role: admin from Supabase takes priority
+    const role: UserRole = isAdmin && adminRole ? adminRole : 'user';
 
     if (userDoc.exists()) {
       const data = userDoc.data();
@@ -71,13 +78,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         uid: user.uid,
         email: user.email,
         displayName: user.displayName,
-        role: data.role || (isSuperAdmin(user) ? 'superadmin' : 'user'),
+        role,
         isAnonymous: false,
         createdAt: data.createdAt?.toDate() || new Date()
       };
     } else {
-      // Create new user profile
-      const role: UserRole = isSuperAdmin(user) ? 'superadmin' : 'user';
+      // Create new user profile in Firebase
       const newProfile = {
         uid: user.uid,
         email: user.email,
