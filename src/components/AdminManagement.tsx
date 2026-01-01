@@ -95,7 +95,8 @@ export const AdminManagement: React.FC = () => {
     const result = await addAdmin(
       newAdminEmail,
       newAdminRole,
-      userProfile?.email || 'unknown'
+      userProfile?.email || 'unknown',
+      userProfile?.email || ''
     );
 
     if (result.success) {
@@ -111,7 +112,7 @@ export const AdminManagement: React.FC = () => {
   };
 
   const handleUpdateRole = async (adminId: string, newRole: 'admin' | 'superadmin') => {
-    const result = await updateAdminRole(adminId, newRole);
+    const result = await updateAdminRole(adminId, newRole, userProfile?.email || '');
     if (result.success) {
       toast.success('Role berhasil diubah');
       await loadAdmins();
@@ -121,7 +122,7 @@ export const AdminManagement: React.FC = () => {
   };
 
   const handleRemoveAdmin = async (adminId: string) => {
-    const result = await removeAdmin(adminId);
+    const result = await removeAdmin(adminId, userProfile?.email || '');
     if (result.success) {
       toast.success('Admin berhasil dihapus');
       await loadAdmins();
