@@ -65,17 +65,38 @@ export const getAllAdmins = async (): Promise<AdminUser[]> => {
   }
 };
 
+// Verify current user is admin before operations
+const verifyAdminAccess = async (currentUserEmail: string): Promise<{ isAdmin: boolean; isSuperAdmin: boolean }> => {
+  const { data } = await supabase
+    .from('admin_users')
+    .select('role')
+    .eq('email', currentUserEmail.toLowerCase().trim())
+    .maybeSingle();
+  
+  return {
+    isAdmin: !!data,
+    isSuperAdmin: data?.role === 'superadmin'
+  };
+};
+
 // Add new admin
 export const addAdmin = async (
   email: string, 
   role: 'admin' | 'superadmin',
-  createdBy: string
+  createdBy: string,
+  currentUserEmail: string
 ): Promise<{ success: boolean; error?: string }> => {
   try {
+    // Verify current user is admin
+    const { isAdmin } = await verifyAdminAccess(currentUserEmail);
+    if (!isAdmin) {
+      return { success: false, error: 'Anda tidak memiliki akses untuk menambah admin' };
+    }
+
     const { error } = await supabase
       .from('admin_users')
       .insert({
-        firebase_uid: `pending_${Date.now()}`, // Will be updated when user logs in
+        firebase_uid: `pending_${Date.now()}`,
         email: email.toLowerCase().trim(),
         role,
         created_by: createdBy
@@ -98,9 +119,16 @@ export const addAdmin = async (
 // Update admin role
 export const updateAdminRole = async (
   adminId: string, 
-  newRole: 'admin' | 'superadmin'
+  newRole: 'admin' | 'superadmin',
+  currentUserEmail: string
 ): Promise<{ success: boolean; error?: string }> => {
   try {
+    // Verify current user is superadmin
+    const { isSuperAdmin } = await verifyAdminAccess(currentUserEmail);
+    if (!isSuperAdmin) {
+      return { success: false, error: 'Hanya superadmin yang dapat mengubah role' };
+    }
+
     const { error } = await supabase
       .from('admin_users')
       .update({ role: newRole })
@@ -115,8 +143,17 @@ export const updateAdminRole = async (
 };
 
 // Remove admin
-export const removeAdmin = async (adminId: string): Promise<{ success: boolean; error?: string }> => {
+export const removeAdmin = async (
+  adminId: string,
+  currentUserEmail: string
+): Promise<{ success: boolean; error?: string }> => {
   try {
+    // Verify current user is superadmin
+    const { isSuperAdmin } = await verifyAdminAccess(currentUserEmail);
+    if (!isSuperAdmin) {
+      return { success: false, error: 'Hanya superadmin yang dapat menghapus admin' };
+    }
+
     const { error } = await supabase
       .from('admin_users')
       .delete()
