@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
   Table,
@@ -10,13 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { 
   Users, 
@@ -24,26 +16,19 @@ import {
   Crown, 
   Shield, 
   User, 
-  UserPlus,
-  MoreHorizontal,
   ShieldAlert
 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { getAllUsers, updateUserRole, UserData } from '@/services/userService';
+import { getAllUsers, UserData } from '@/services/userService';
 import { UserRole } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { useUserRole } from '@/hooks/useUserRole';
+import { isAdminEmail } from '@/services/adminService';
 
 const roleConfig = {
-  superadmin: { label: 'Super Admin', icon: Crown, color: 'bg-purple-500' },
+  superadmin: { label: 'Super Admin', icon: Crown, color: 'bg-amber-500' },
   admin: { label: 'Admin', icon: Shield, color: 'bg-blue-500' },
-  contributor: { label: 'Kontributor', icon: UserPlus, color: 'bg-green-500' },
-  user: { label: 'User', icon: User, color: 'bg-gray-500' }
+  user: { label: 'User', icon: User, color: 'bg-gray-500' },
+  anonymous: { label: 'Tamu', icon: User, color: 'bg-gray-400' }
 };
 
 export const UserManagement: React.FC = () => {
@@ -51,7 +36,6 @@ export const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterRole, setFilterRole] = useState<UserRole | 'all'>('all');
 
   // Block non-admin access
   if (!roleLoading && !isAdmin) {
@@ -85,24 +69,10 @@ export const UserManagement: React.FC = () => {
     }
   };
 
-  const handleRoleChange = async (uid: string, newRole: UserRole) => {
-    try {
-      await updateUserRole(uid, newRole);
-      setUsers(users.map(user => 
-        user.uid === uid ? { ...user, role: newRole } : user
-      ));
-      toast.success('Role pengguna berhasil diubah');
-    } catch (error) {
-      toast.error('Gagal mengubah role pengguna');
-      console.error(error);
-    }
-  };
-
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.displayName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = filterRole === 'all' || user.role === filterRole;
-    return matchesSearch && matchesRole;
+    return matchesSearch;
   });
 
   const getRoleIcon = (role: UserRole) => {
@@ -111,11 +81,21 @@ export const UserManagement: React.FC = () => {
     return <Icon className="w-4 h-4" />;
   };
 
-  const getRoleBadge = (role: UserRole) => {
-    const config = roleConfig[role] || roleConfig.user;
+  const getRoleBadge = (user: UserData) => {
+    // Check if this user is the admin
+    if (isAdminEmail(user.email)) {
+      return (
+        <Badge className="flex items-center gap-1 bg-amber-500/10 text-amber-600 border-amber-500/20">
+          <Crown className="w-3 h-3" />
+          Super Admin
+        </Badge>
+      );
+    }
+    
+    const config = roleConfig.user;
     return (
       <Badge variant="secondary" className="flex items-center gap-1">
-        {getRoleIcon(role)}
+        {getRoleIcon('user')}
         {config.label}
       </Badge>
     );
@@ -124,7 +104,7 @@ export const UserManagement: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -142,25 +122,9 @@ export const UserManagement: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Admin</p>
-                <p className="text-2xl font-bold">
-                  {users.filter(u => u.role === 'admin' || u.role === 'superadmin').length}
-                </p>
+                <p className="text-2xl font-bold">1</p>
               </div>
-              <Shield className="w-8 h-8 text-purple-500" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Kontributor</p>
-                <p className="text-2xl font-bold">
-                  {users.filter(u => u.role === 'contributor').length}
-                </p>
-              </div>
-              <UserPlus className="w-8 h-8 text-green-500" />
+              <Shield className="w-8 h-8 text-amber-500" />
             </div>
           </CardContent>
         </Card>
@@ -171,7 +135,7 @@ export const UserManagement: React.FC = () => {
               <div>
                 <p className="text-sm text-muted-foreground">Regular Users</p>
                 <p className="text-2xl font-bold">
-                  {users.filter(u => u.role === 'user').length}
+                  {Math.max(0, users.length - 1)}
                 </p>
               </div>
               <User className="w-8 h-8 text-gray-500" />
@@ -183,31 +147,17 @@ export const UserManagement: React.FC = () => {
       {/* User Management */}
       <Card>
         <CardHeader>
-          <CardTitle>Manajemen Pengguna</CardTitle>
+          <CardTitle>Daftar Pengguna</CardTitle>
           
-          {/* Filters */}
-          <div className="flex gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Cari pengguna..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select value={filterRole} onValueChange={(value) => setFilterRole(value as UserRole | 'all')}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Filter Role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Semua Role</SelectItem>
-                <SelectItem value="superadmin">Super Admin</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="contributor">Kontributor</SelectItem>
-                <SelectItem value="user">User</SelectItem>
-              </SelectContent>
-            </Select>
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Cari pengguna..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
           </div>
         </CardHeader>
         
@@ -222,7 +172,6 @@ export const UserManagement: React.FC = () => {
                   <TableHead>Email</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead>Terdaftar</TableHead>
-                  <TableHead>Aksi</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -230,40 +179,16 @@ export const UserManagement: React.FC = () => {
                   <TableRow key={user.uid}>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${roleConfig[user.role].color}`}>
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${isAdminEmail(user.email) ? 'bg-amber-500' : 'bg-gray-500'}`}>
                           {user.displayName.charAt(0).toUpperCase()}
                         </div>
                         <span className="font-medium">{user.displayName}</span>
                       </div>
                     </TableCell>
                     <TableCell>{user.email}</TableCell>
-                    <TableCell>{getRoleBadge(user.role)}</TableCell>
+                    <TableCell>{getRoleBadge(user)}</TableCell>
                     <TableCell>
                       {user.createdAt.toLocaleDateString('id-ID')}
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
-                            <MoreHorizontal className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          {user.role !== 'superadmin' && (
-                            <>
-                              <DropdownMenuItem onClick={() => handleRoleChange(user.uid, 'admin')}>
-                                Jadikan Admin
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleRoleChange(user.uid, 'contributor')}>
-                                Jadikan Kontributor
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleRoleChange(user.uid, 'user')}>
-                                Jadikan User
-                              </DropdownMenuItem>
-                            </>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}

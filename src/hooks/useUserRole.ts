@@ -1,6 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
 
-export type UserRole = 'admin' | 'superadmin' | 'contributor' | 'user';
+export type UserRole = 'admin' | 'superadmin' | 'user' | 'anonymous';
 
 export const useUserRole = () => {
   const { userProfile, loading } = useAuth();

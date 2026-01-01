@@ -9,9 +9,9 @@ import {
   applyUserDataToLocal, 
   setupAutoSync 
 } from '@/services/userDataService';
-import { checkAdminStatus } from '@/services/adminService';
+import { checkAdminStatus, isAdminEmail } from '@/services/adminService';
 
-export type UserRole = 'superadmin' | 'admin' | 'contributor' | 'user' | 'anonymous';
+export type UserRole = 'superadmin' | 'admin' | 'user' | 'anonymous';
 
 export interface UserProfile {
   uid: string;
