@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock, Home, Book, Settings, Info, Heart, Bell, Palette, Volume2, Database, Bot, CalendarDays } from 'lucide-react';
+import { Clock, Home, Book, Settings, Info, Heart, Bell, Palette, Volume2, Database, Bot, CalendarDays, Shield } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { ThemeCustomizer } from '@/components/ThemeCustomizer';
 import { NotificationSettings } from '@/components/NotificationSettings';
 import { AudioSettings } from '@/components/AudioSettings';
 import { GlobalStats } from '@/components/GlobalStats';
+import { useNavigate } from 'react-router-dom';
 
 interface MenuPageProps {
   onNavigate: (tab: string) => void;
 }
 
 export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
+  const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAudioSettings, setShowAudioSettings] = useState(false);
   const [showThemeCustomizer, setShowThemeCustomizer] = useState(false);
@@ -127,6 +129,10 @@ export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
       color: 'text-red-500'
     }
   ];
+
+  const handleAdminLogin = () => {
+    navigate('/admin-login');
+  };
 
   if (showNotifications) {
     return <NotificationSettings onClose={() => setShowNotifications(false)} />;
@@ -260,6 +266,21 @@ export const MenuPage: React.FC<MenuPageProps> = ({ onNavigate }) => {
           <div className="text-xs text-muted-foreground space-y-1">
             <p>"Dan ingatlah Allah, baik di waktu pagi maupun petang"</p>
             <p className="italic">- QS. Al-Kahf: 28</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Admin Panel Button */}
+      <Card className="border-primary/20 hover:border-primary/40 transition-colors cursor-pointer" onClick={handleAdminLogin}>
+        <CardContent className="p-4">
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-lg bg-primary/10 text-primary">
+              <Shield className="w-6 h-6" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-foreground">Admin Panel</h3>
+              <p className="text-sm text-muted-foreground">Login untuk mengelola aplikasi</p>
+            </div>
           </div>
         </CardContent>
       </Card>

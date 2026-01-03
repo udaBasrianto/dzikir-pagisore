@@ -1,8 +1,8 @@
 import React from 'react';
-import { Home, Clock, CheckCircle, Menu, Trophy, BarChart3, Database, BookOpen, Bot, Moon, Minus, Plus } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import { Home, Clock, CheckCircle, Menu, Trophy, BarChart3, Database, BookOpen, Bot, Moon, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUserRole } from '@/hooks/useUserRole';
+import { useNavigate } from 'react-router-dom';
 
 interface DesktopSidebarProps {
   activeTab: string;
@@ -11,6 +11,7 @@ interface DesktopSidebarProps {
 
 export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ activeTab, onTabChange }) => {
   const { isAdmin } = useUserRole();
+  const navigate = useNavigate();
 
   const tabs = [
     { id: 'pagi', label: 'Dzikir Pagi', icon: Clock },
@@ -57,6 +58,18 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ activeTab, onTab
             );
           })}
         </nav>
+      </div>
+
+      {/* Admin Login Button */}
+      <div className="p-4 border-t border-border">
+        <Button
+          variant="outline"
+          className="w-full flex items-center gap-2 text-muted-foreground hover:text-primary hover:border-primary/50"
+          onClick={() => navigate('/admin-login')}
+        >
+          <Shield className="w-4 h-4" />
+          <span>Admin Panel</span>
+        </Button>
       </div>
     </div>
   );
