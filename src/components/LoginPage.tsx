@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { Moon, Star, Sparkles, User, Mail, Lock, Eye, EyeOff, ArrowRight, Check } from 'lucide-react';
+import { OnboardingPage } from '@/components/OnboardingPage';
 
 // Animated floating particles component
 const FloatingParticles = () => {
@@ -140,6 +141,25 @@ export const LoginPage: React.FC = () => {
   const [displayName, setDisplayName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [activeTab, setActiveTab] = useState('login');
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  // Check if user has seen onboarding
+  useEffect(() => {
+    const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
+    if (!hasSeenOnboarding) {
+      setShowOnboarding(true);
+    }
+  }, []);
+
+  const handleOnboardingComplete = () => {
+    localStorage.setItem('hasSeenOnboarding', 'true');
+    setShowOnboarding(false);
+  };
+
+  // Show onboarding for new users
+  if (showOnboarding) {
+    return <OnboardingPage onComplete={handleOnboardingComplete} />;
+  }
 
   const handleGoogleSignIn = async () => {
     try {
