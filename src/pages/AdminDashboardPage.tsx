@@ -32,7 +32,7 @@ export const AdminDashboardPage: React.FC = () => {
           .from('admin_users')
           .select('id, email, role')
           .eq('email', session.user.email)
-          .single();
+          .maybeSingle();
 
         if (error || !adminData) {
           toast.error('Anda tidak memiliki akses admin');

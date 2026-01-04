@@ -19,27 +19,27 @@ export type Database = {
           created_at: string
           created_by: string | null
           email: string
-          firebase_uid: string
           id: string
           role: string
+          supabase_user_id: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
           created_by?: string | null
           email: string
-          firebase_uid: string
           id?: string
           role?: string
+          supabase_user_id?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
           created_by?: string | null
           email?: string
-          firebase_uid?: string
           id?: string
           role?: string
+          supabase_user_id?: string | null
           updated_at?: string
         }
         Relationships: []
