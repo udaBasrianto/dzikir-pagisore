@@ -5,7 +5,7 @@ const ADMIN_EMAIL = 'mas@abd.com';
 
 // Check if user is admin (simplified - only 1 admin)
 export const checkAdminStatus = async (
-  firebaseUid: string, 
+  supabaseUserId: string, 
   email: string
 ): Promise<{ isAdmin: boolean; role: 'superadmin' | 'admin' | null }> => {
   try {
@@ -13,10 +13,10 @@ export const checkAdminStatus = async (
     
     // Only mas@abd.com is admin
     if (normalizedEmail === ADMIN_EMAIL) {
-      // Update firebase_uid in database
+      // Update supabase_user_id in database
       await supabase
         .from('admin_users')
-        .update({ firebase_uid: firebaseUid })
+        .update({ supabase_user_id: supabaseUserId })
         .eq('email', ADMIN_EMAIL);
       
       return { isAdmin: true, role: 'superadmin' };
