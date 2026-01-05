@@ -40,6 +40,11 @@ const FloatingParticles = () => (
   </div>
 );
 
+const isUuid = (value: string) =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    value
+  );
+
 export const AdminLoginPage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -56,8 +61,10 @@ export const AdminLoginPage: React.FC = () => {
   useEffect(() => {
     const checkExistingSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
         if (session?.user) {
           // Check if user is admin
           const { data: adminData } = await supabase
@@ -65,7 +72,7 @@ export const AdminLoginPage: React.FC = () => {
             .select('role')
             .eq('email', session.user.email)
             .maybeSingle();
-          
+
           if (adminData) {
             navigate('/admin-dashboard');
             return;
@@ -81,7 +88,9 @@ export const AdminLoginPage: React.FC = () => {
     checkExistingSession();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
         // Defer admin check to avoid deadlock
         setTimeout(async () => {
@@ -90,7 +99,7 @@ export const AdminLoginPage: React.FC = () => {
             .select('role')
             .eq('email', session.user.email)
             .maybeSingle();
-          
+
           if (adminData) {
             navigate('/admin-dashboard');
           }
@@ -108,14 +117,15 @@ export const AdminLoginPage: React.FC = () => {
       .select('supabase_user_id')
       .eq('email', adminEmail.toLowerCase().trim())
       .maybeSingle();
-    
-    return data && (!data.supabase_user_id || data.supabase_user_id === '');
+
+    const linkedId = data?.supabase_user_id ?? '';
+    return !linkedId || !isUuid(linkedId);
   };
 
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+
     if (!email || !password) {
       setError('Email dan password harus diisi');
       return;
@@ -137,24 +147,25 @@ export const AdminLoginPage: React.FC = () => {
         return;
       }
 
-      // Check if admin needs to setup password first
-      if (!adminData.supabase_user_id || adminData.supabase_user_id === '') {
-        setNeedsSetup(true);
-        setActiveTab('setup');
-        setError('Akun admin belum diaktivasi. Silakan buat password terlebih dahulu.');
-        setLoading(false);
-        return;
-      }
+      const linkedId = adminData.supabase_user_id ?? '';
+      const needsActivation = !linkedId || !isUuid(linkedId);
 
       // Try to sign in with Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: email.toLowerCase().trim(),
-        password
-      });
+      const { data: authData, error: authError } =
+        await supabase.auth.signInWithPassword({
+          email: email.toLowerCase().trim(),
+          password,
+        });
 
       if (authError) {
         if (authError.message.includes('Invalid login credentials')) {
-          setError('Password salah');
+          if (needsActivation) {
+            setNeedsSetup(true);
+            setActiveTab('setup');
+            setError('Akun admin belum diaktivasi. Silakan buat password terlebih dahulu.');
+          } else {
+            setError('Password salah');
+          }
         } else {
           setError(authError.message);
         }
@@ -163,6 +174,13 @@ export const AdminLoginPage: React.FC = () => {
       }
 
       if (authData.user) {
+        if (needsActivation) {
+          await supabase
+            .from('admin_users')
+            .update({ supabase_user_id: authData.user.id })
+            .eq('email', email.toLowerCase().trim());
+        }
+
         toast.success('Login admin berhasil!');
         navigate('/admin-dashboard');
       }
@@ -177,7 +195,7 @@ export const AdminLoginPage: React.FC = () => {
   const handleAdminSetup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+
     if (!email || !password || !confirmPassword) {
       setError('Semua field harus diisi');
       return;
@@ -210,7 +228,8 @@ export const AdminLoginPage: React.FC = () => {
       }
 
       // Check if already has supabase account
-      if (adminData.supabase_user_id && adminData.supabase_user_id !== '') {
+      const linkedId = adminData.supabase_user_id ?? '';
+      if (linkedId && isUuid(linkedId)) {
         setError('Akun sudah diaktivasi. Silakan login dengan password Anda.');
         setActiveTab('login');
         setLoading(false);
