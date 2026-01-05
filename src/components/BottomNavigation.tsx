@@ -13,7 +13,6 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({ activeTab, o
   const tabs = [
     { id: 'pagi', label: 'Dzikir', icon: Clock },
     { id: 'progress', label: 'Progress', icon: TrendingUp },
-    { id: 'statistik', label: 'Statistik', icon: BarChart3 },
     { id: 'gamification', label: 'Prestasi', icon: Trophy },
     { id: 'menu', label: 'Menu', icon: Menu },
   ];

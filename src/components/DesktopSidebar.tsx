@@ -21,7 +21,6 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ activeTab, onTab
     { id: 'ai', label: 'AI Assistant', icon: Bot },
     { id: 'progress', label: 'Progress', icon: CheckCircle },
     { id: 'gamification', label: 'Gamifikasi', icon: Trophy },
-    { id: 'statistics', label: 'Statistik', icon: BarChart3 },
     ...(isAdmin ? [{ id: 'crud', label: 'Kelola Dzikir', icon: Database }] : []),
     { id: 'menu', label: 'Menu', icon: Menu },
   ];
